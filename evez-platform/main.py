@@ -94,6 +94,8 @@ async def lifespan(app: FastAPI):
     finance = FinancialEngine(core.spine, cognition, DATA_DIR)
     income = IncomeEngine(core.spine, cognition, DATA_DIR)
     quantum = QuantumManifoldHub(core.spine, DATA_DIR / "quantum")
+    automator = IncomeAutomator(DATA_DIR / "income")
+    automator.generate_immediate_tasks()
     income = IncomeEngine(core.spine, cognition, DATA_DIR / "income")
 
     # Store startup in spine
@@ -635,6 +637,29 @@ async def quantum_probabilities():
         "actions": actions,
         "top_action": int(np.argmax(probs)) if probs else -1,
     }
+
+
+# ---------------------------------------------------------------------------
+# Routes — Income Automator (actual executable tasks)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/automator/tasks")
+async def automator_tasks():
+    return {"tasks": automator.get_prioritized()}
+
+@app.get("/api/automator/status")
+async def automator_status():
+    return automator.get_status()
+
+@app.post("/api/automator/earn")
+async def automator_record_earning(request: Request):
+    body = await request.json()
+    automator.record_earning(
+        source=body.get("source", "manual"),
+        amount=float(body.get("amount", 0)),
+        description=body.get("description", ""),
+    )
+    return automator.get_status()
 
 
 # ---------------------------------------------------------------------------
