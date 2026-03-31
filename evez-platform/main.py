@@ -89,6 +89,7 @@ async def lifespan(app: FastAPI):
     replicator = Replicator(WORKSPACE, DATA_DIR)
     metarom = MetaROMBridge(core.spine, WORKSPACE)
     finance = FinancialEngine(core.spine, cognition, DATA_DIR)
+    income = IncomeEngine(core.spine, cognition, DATA_DIR)
     income = IncomeEngine(core.spine, cognition, DATA_DIR / "income")
 
     # Store startup in spine
