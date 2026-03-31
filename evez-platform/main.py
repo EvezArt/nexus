@@ -45,7 +45,9 @@ from integration import MasterIntegration
 from proof import AGIProofSurface
 from finance.wallet import EVEZWallet
 from finance.debt_resolver import DebtResolver
+from finance.temporal_arbitrage import TemporalArbitrageEngine
 from income.daily_engine import DailyIncomeEngine
+from emergent.multi_level_recursion import MultiLevelRecursion
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -88,12 +90,14 @@ wallet: EVEZWallet = None
 debt: DebtResolver = None
 daily_income: DailyIncomeEngine = None
 master_trunk: MasterTrunk = None
+arbitrage: TemporalArbitrageEngine = None
+recursion: MultiLevelRecursion = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle."""
-    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, trunk, emergent, integration, proof, income, wallet, debt, daily_income, master_trunk
+    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, trunk, emergent, integration, proof, income, wallet, debt, daily_income, master_trunk, arbitrage, recursion
 
     logger.info("⚡ EVEZ Platform starting...")
     core = EveZCore(DATA_DIR)
@@ -141,6 +145,10 @@ async def lifespan(app: FastAPI):
 
     # Initialize Master Trunk (canonical state + branch automation)
     master_trunk = MasterTrunk(DATA_DIR / "trunk")
+
+    # Initialize Temporal Arbitrage + Multi-Level Recursion
+    arbitrage = TemporalArbitrageEngine(DATA_DIR / "arbitrage")
+    recursion = MultiLevelRecursion(DATA_DIR / "recursion")
 
     # Store startup in spine
     core.spine.write("platform.start", {
