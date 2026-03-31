@@ -1,0 +1,3 @@
+{"id": "5322cb6a", "title": "Fix VULN-001: Chat queue race condition", "description": "", "priority": "medium", "project": "default", "assignee": "", "status": "open", "created": "2026-03-31T18:56:54.557782+00:00", "updated": "2026-03-31T18:56:54.557794+00:00"}
+{"id": "4641f9aa", "title": "Fix VULN-014: Daemon /chat auth", "description": "", "priority": "medium", "project": "default", "assignee": "", "status": "open", "created": "2026-03-31T18:56:54.595226+00:00", "updated": "2026-03-31T18:56:54.595238+00:00"}
+{"id": "26aa662a", "title": "Deploy nexus to VPS", "description": "", "priority": "medium", "project": "default", "assignee": "", "status": "open", "created": "2026-03-31T18:56:54.633753+00:00", "updated": "2026-03-31T18:56:54.633764+00:00"}
