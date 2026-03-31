@@ -165,8 +165,8 @@ async def chat(req: ChatRequest):
             yield f"data: {json.dumps({'type': 'conversation_id', 'id': conv_id})}\n\n"
 
             try:
-                async for chunk in agent.run(req.message, model=req.model,
-                                            conversation_id=conv_id, stream=True):
+                async for chunk in agent.run_stream(req.message, model=req.model,
+                                                    conversation_id=conv_id):
                     if chunk:
                         yield f"data: {json.dumps({'type': 'content', 'content': chunk})}\n\n"
                 yield f"data: {json.dumps({'type': 'done'})}\n\n"
@@ -176,7 +176,7 @@ async def chat(req: ChatRequest):
         return StreamingResponse(generate(), media_type="text/event-stream")
     else:
         result = await agent.run(req.message, model=req.model,
-                                 conversation_id=conv_id, stream=False)
+                                 conversation_id=conv_id)
         return {"conversation_id": conv_id, "response": result}
 
 

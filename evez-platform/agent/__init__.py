@@ -324,78 +324,55 @@ class Agent:
         self.max_steps = 10
 
     async def run(self, user_message: str, model: str = None,
-                  conversation_id: str = None,
-                  stream: bool = False):
-        """Run the agent loop with tool calling."""
+                  conversation_id: str = None) -> str:
+        """Run the agent loop with tool calling. Returns final response."""
 
-        # Build conversation context
+        messages = self._build_messages(user_message, conversation_id, model)
+
+        full_response = ""
+        for step in range(self.max_steps):
+            response_text = await self.models.get_response(messages, model=model)
+            if not response_text:
+                response_text = "I couldn't process that. Please check your model configuration."
+
+            tool_match = re.search(r'```tool\s*\n(.*?)\n```', response_text, re.DOTALL)
+            if not tool_match:
+                full_response = response_text
+                break
+
+            try:
+                tool_call = json.loads(tool_match.group(1))
+                messages.append({"role": "assistant", "content": response_text})
+                result = await self.tools.execute(tool_call.get("tool", ""), tool_call.get("params", {}))
+                messages.append({"role": "user", "content": f"Tool `{tool_call.get('tool')}` {'succeeded' if result.success else 'failed'}:\n{result.output or result.error}"})
+            except (json.JSONDecodeError, KeyError):
+                full_response = response_text
+                break
+
+        if not full_response:
+            full_response = "Maximum steps reached.\n\n" + response_text
+
+        if conversation_id:
+            self.core.conversations.add_message(conversation_id, "assistant", full_response, model)
+        return full_response
+
+    async def run_stream(self, user_message: str, model: str = None,
+                         conversation_id: str = None):
+        """Run agent loop, yielding response chunks for streaming."""
+        result = await self.run(user_message, model, conversation_id)
+        # Yield in chunks for SSE streaming effect
+        chunk_size = 50
+        for i in range(0, len(result), chunk_size):
+            yield result[i:i + chunk_size]
+
+    def _build_messages(self, user_message: str, conversation_id: str = None, model: str = None) -> list:
+        """Build conversation message list."""
         messages = [{"role": "system", "content": AGENT_SYSTEM_PROMPT}]
-
-        # Add conversation history
         if conversation_id:
             history = self.core.conversations.get_messages(conversation_id, limit=20)
             for msg in history[-20:]:
                 messages.append({"role": msg["role"], "content": msg["content"]})
-
         messages.append({"role": "user", "content": user_message})
-
-        # Save user message
         if conversation_id:
             self.core.conversations.add_message(conversation_id, "user", user_message, model)
-
-        # Agent loop
-        full_response = ""
-        for step in range(self.max_steps):
-            # Get model response
-            response_text = await self.models.get_response(messages, model=model)
-
-            if not response_text:
-                response_text = "I couldn't process that. Please check your model configuration."
-
-            # Check for tool calls
-            tool_match = re.search(r'```tool\s*\n(.*?)\n```', response_text, re.DOTALL)
-
-            if not tool_match:
-                # No tool call — final response
-                full_response = response_text
-                if conversation_id:
-                    self.core.conversations.add_message(conversation_id, "assistant", full_response, model)
-                if stream:
-                    yield full_response
-                else:
-                    return full_response
-                break
-
-            # Execute tool
-            try:
-                tool_call = json.loads(tool_match.group(1))
-                tool_name = tool_call.get("tool", "")
-                tool_params = tool_call.get("params", {})
-
-                # Add assistant message with tool call
-                messages.append({"role": "assistant", "content": response_text})
-
-                # Execute
-                result = await self.tools.execute(tool_name, tool_params)
-
-                # Add result to conversation
-                tool_result_msg = f"Tool `{tool_name}` {'succeeded' if result.success else 'failed'}:\n{result.output or result.error}"
-                messages.append({"role": "user", "content": tool_result_msg})
-
-            except (json.JSONDecodeError, KeyError) as e:
-                full_response = response_text  # Return as-is if tool parse fails
-                if conversation_id:
-                    self.core.conversations.add_message(conversation_id, "assistant", full_response, model)
-                if stream:
-                    yield full_response
-                else:
-                    return full_response
-                break
-
-        if not full_response:
-            full_response = "Maximum steps reached. Here's what I have so far:\n\n" + response_text
-
-        if stream:
-            yield full_response
-        else:
-            return full_response
+        return messages
