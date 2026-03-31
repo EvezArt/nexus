@@ -269,11 +269,11 @@
 2026-03-31 13:18:32 [INFO]   📦 Auto-committed: 2f7ebcf
 2026-03-31 13:18:32 [INFO]   📋 Pending tasks: 6
 2026-03-31 13:18:32 [INFO]   ✓ Cycle complete (45 events, 45 commits, 2 memories)
-��� Heartbeat #28
-2026-03-31 11:52:26 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.32)
-2026-03-31 11:52:26 [INFO]   📝 2026-03-31.md: 94 lines
-2026-03-31 11:52:26 [INFO]   📦 Auto-committed: 295f916
-2026-03-31 11:52:26 [INFO]   📋 Pending tasks: 6
+2026-03-31 13:23:33 [INFO] 💓 Heartbeat #46
+2026-03-31 13:23:33 [INFO] Archived weak memory: last_boot (strength=0.099)
+2026-03-31 13:23:33 [INFO]   Strongest memories: pending_tasks(0.95)
+2026-03-31 13:23:33 [INFO]   📝 2026-03-31.md: 275 lines
+��� Pending tasks: 6
 2026-03-31 11:52:26 [INFO]   ✓ Cycle complete (28 events, 28 commits, 2 memories)
 2026-03-31 11:52:50 [INFO] 💓 Heartbeat #30
 2026-03-31 11:52:50 [INFO] 💓 Heartbeat #30
@@ -805,3 +805,17 @@
 2026-03-31 13:22:51 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.18)
 2026-03-31 13:22:51 [INFO]   📝 2026-03-31.md: 275 lines
 2026-03-31 13:22:51 [INFO]   📝 2026-03-31.md: 275 lines
+2026-03-31 13:22:51 [INFO]   📦 Auto-committed: e7c968f
+2026-03-31 13:22:51 [INFO]   📦 Auto-committed: e7c968f
+2026-03-31 13:22:51 [INFO]   📋 Pending tasks: 6
+2026-03-31 13:22:51 [INFO]   📋 Pending tasks: 6
+2026-03-31 13:22:51 [INFO]   🧠 Local cognition: 1 pattern(s)
+2026-03-31 13:22:51 [INFO]   🧠 Local cognition: 1 pattern(s)
+2026-03-31 13:22:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 13:22:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 13:22:51 [INFO]   ✓ Cycle complete (48 events, 48 commits, 2 memories)
+2026-03-31 13:22:51 [INFO]   ✓ Cycle complete (48 events, 48 commits, 2 memories)
+2026-03-31 13:23:33 [INFO] 💓 Heartbeat #46
+2026-03-31 13:23:33 [INFO] Archived weak memory: last_boot (strength=0.099)
+2026-03-31 13:23:33 [INFO]   Strongest memories: pending_tasks(0.95)
+2026-03-31 13:23:33 [INFO]   📝 2026-03-31.md: 275 lines
