@@ -1,0 +1,73 @@
+# EVEZ Compute Swarm — GitHub Actions
+# Fork this repo N times for N * 2000 min/mo free compute
+# Each fork auto-registers with the swarm coordinator
+
+name: EVEZ Swarm
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  compute-tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: System Info
+        run: |
+          echo "CPUs: $(nproc)"
+          echo "RAM: $(free -h | awk '/Mem:/{print $2}')"
+          echo "Runner: ${{ runner.name }}"
+          echo "Repo: ${{ github.repository }}"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: EVEZ Compute Tick
+        run: |
+          python3 -c "
+          import json, time, hashlib, os, urllib.request
+
+          node_id = hashlib.sha256('${{ runner.name }}'.encode()).hexdigest()[:12]
+          task = {
+              'node': '${{ runner.name }}',
+              'node_id': node_id,
+              'repo': '${{ github.repository }}',
+              'timestamp': time.time(),
+              'cpus': os.cpu_count(),
+              'run_id': '${{ github.run_id }}',
+              'run_number': '${{ github.run_number }}',
+          }
+          print(f'Swarm tick: {json.dumps(task, indent=2)}')
+
+          # Simulate compute work
+          import math
+          result = sum(math.factorial(i) % 1000007 for i in range(20))
+          print(f'Compute result: {result}')
+          "
+
+      - name: Register with Swarm Coordinator
+        if: env.EVEZ_COORDINATOR != ''
+        env:
+          EVEZ_COORDINATOR: ${{ secrets.EVEZ_COORDINATOR }}
+        run: |
+          curl -sf -X POST "${EVEZ_COORDINATOR}/api/swarm/register" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "${{ runner.name }}",
+              "tier": "github",
+              "endpoint": "gha://${{ github.repository }}",
+              "cpus": 2,
+              "ram_gb": 7,
+              "capabilities": ["python", "shell", "compute"]
+            }' || echo "Coordinator not reachable (offline mode)"
+
+      - name: Report Status
+        run: |
+          echo "Swarm heartbeat complete from ${{ runner.name }}"

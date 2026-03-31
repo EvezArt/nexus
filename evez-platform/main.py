@@ -73,6 +73,7 @@ async def lifespan(app: FastAPI):
     streamer = AutonomousStream(core, models, search_engine)
     swarm = ComputeSwarm(DATA_DIR / "swarm")
     provisioner = SwarmProvisioner()
+    cognition = CognitiveEngine(core.spine)
 
     # Store startup in spine
     core.spine.write("platform.start", {
@@ -307,14 +308,104 @@ async def system_status():
     model_list = await models.list_models()
     return {
         "platform": "EVEZ",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "models": model_list,
         "ollama": await models.is_ollama_up(),
         "stream": streamer.get_status(),
+        "swarm": swarm.get_status(),
+        "cognition": cognition.get_state(),
         "spine_events": core.spine._event_count,
         "conversations": len(core.conversations.list_conversations()),
         "memories": len(core.memory.memories),
     }
+
+
+# ---------------------------------------------------------------------------
+# Routes — Compute Swarm
+# ---------------------------------------------------------------------------
+
+@app.get("/api/swarm/status")
+async def swarm_status():
+    return swarm.get_status()
+
+@app.post("/api/swarm/register")
+async def swarm_register(request: Request):
+    body = await request.json()
+    node_id = swarm.register_node(
+        name=body.get("name", "unnoded"),
+        tier=ComputeTier(body.get("tier", "edge")),
+        endpoint=body.get("endpoint", "unknown"),
+        cpus=body.get("cpus", 0),
+        ram_gb=body.get("ram_gb", 0),
+        gpu=body.get("gpu", ""),
+        capabilities=body.get("capabilities", []),
+    )
+    return {"node_id": node_id, "status": "registered"}
+
+@app.post("/api/swarm/submit")
+async def swarm_submit(request: Request):
+    body = await request.json()
+    task_id = swarm.submit_task(
+        name=body.get("name", "unnamed"),
+        payload=body.get("payload", {}),
+        priority=body.get("priority", 5),
+        required_tier=ComputeTier(body.get("tier", "edge")),
+        requires_gpu=body.get("requires_gpu", False),
+        timeout=body.get("timeout", 300),
+    )
+    return {"task_id": task_id, "status": "queued"}
+
+@app.get("/api/swarm/provision/{provider}")
+async def swarm_provision(provider: str):
+    scripts = {
+        "github": provisioner.generate_gha_swarm("EvezArt/evez-platform"),
+        "oracle": provisioner.generate_oracle_init(),
+        "kaggle": provisioner.generate_kaggle_notebook(),
+        "boinc": provisioner.generate_boinc_config(),
+        "vastai": provisioner.generate_vastai_script(),
+    }
+    if provider not in scripts:
+        raise HTTPException(404, f"Unknown provider: {provider}")
+    return {"provider": provider, "script": scripts[provider]}
+
+@app.get("/api/swarm/provisioners")
+async def swarm_provisioners():
+    return {"provisioners": [
+        {"id": "oracle", "name": "Oracle Cloud Free", "cpus": 4, "ram_gb": 24, "cost": "free forever"},
+        {"id": "github", "name": "GitHub Actions Swarm", "cpus": "Nx2", "cost": "2k min/mo x N forks"},
+        {"id": "kaggle", "name": "Kaggle GPU Notebooks", "gpu": "T4 16GB", "cost": "20h/wk free"},
+        {"id": "boinc", "name": "BOINC Volunteer Grid", "cpus": "inf", "cost": "volunteer opt-in"},
+        {"id": "vastai", "name": "Vast.ai Startup", "gpu": "swarm", "cost": "$2500 credits"},
+    ]}
+
+
+# ---------------------------------------------------------------------------
+# Routes — Cognitive Sensory Engine
+# ---------------------------------------------------------------------------
+
+@app.get("/api/cognition/status")
+async def cognition_status():
+    return cognition.get_state()
+
+@app.post("/api/cognition/perceive")
+async def cognition_perceive(request: Request):
+    body = await request.json()
+    result = await cognition.perceive(
+        body.get("modality", "text"),
+        body.get("input", ""),
+        body.get("context"),
+    )
+    return result
+
+@app.get("/api/cognition/focus")
+async def cognition_focus():
+    return cognition.get_focus()
+
+@app.post("/api/cognition/focus")
+async def set_cognition_focus(request: Request):
+    body = await request.json()
+    cognition.set_focus(body.get("target", ""), body.get("reason", ""))
+    return {"status": "ok"}
 
 
 # ---------------------------------------------------------------------------
