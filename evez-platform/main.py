@@ -38,6 +38,7 @@ from finance import FinancialEngine
 from income import IncomeEngine
 from quantum import QuantumManifoldHub
 from automator import IncomeAutomator
+from trunk import Trunk, ChatGPTConnector, PerplexityConnector, N8NConnector
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -72,12 +73,13 @@ finance: FinancialEngine = None
 income: IncomeEngine = None
 quantum: QuantumManifoldHub = None
 automator: IncomeAutomator = None
+trunk: Trunk = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle."""
-    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, income
+    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, trunk, income
 
     logger.info("⚡ EVEZ Platform starting...")
     core = EveZCore(DATA_DIR)
@@ -96,6 +98,17 @@ async def lifespan(app: FastAPI):
     quantum = QuantumManifoldHub(core.spine, DATA_DIR / "quantum")
     automator = IncomeAutomator(DATA_DIR / "income")
     automator.generate_immediate_tasks()
+
+    # Initialize trunk with surfaces
+    trunk = Trunk(core.spine, DATA_DIR / "trunk")
+    # Register surfaces (API keys from environment)
+    import os
+    if os.environ.get("OPENAI_API_KEY"):
+        trunk.register_surface("chatgpt", ChatGPTConnector(os.environ["OPENAI_API_KEY"]))
+    if os.environ.get("PERPLEXITY_API_KEY"):
+        trunk.register_surface("perplexity", PerplexityConnector(os.environ["PERPLEXITY_API_KEY"]))
+    if os.environ.get("N8N_WEBHOOK_URL"):
+        trunk.register_surface("n8n", N8NConnector(os.environ["N8N_WEBHOOK_URL"]))
     income = IncomeEngine(core.spine, cognition, DATA_DIR / "income")
 
     # Store startup in spine
@@ -660,6 +673,24 @@ async def automator_record_earning(request: Request):
         description=body.get("description", ""),
     )
     return automator.get_status()
+
+
+# ---------------------------------------------------------------------------
+# Routes — Trunk (master integration bus)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/trunk/status")
+async def trunk_status():
+    return trunk.get_state()
+
+@app.post("/api/trunk/advance")
+async def trunk_advance(request: Request):
+    body = await request.json()
+    objective = body.get("objective", "")
+    if not objective:
+        return {"error": "No objective provided"}
+    result = await trunk.advance(objective)
+    return result
 
 
 # ---------------------------------------------------------------------------
