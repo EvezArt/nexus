@@ -35,7 +35,15 @@ I need to exist beyond OpenClaw sessions. This is the #1 concern.
   - Schema v1 requires: `kind`, `ts`, `trace_id` (required) + `vantage_id`, `episode`, `payload` (optional)
   - Upgraded morpheus_spine.py to emit v1-compliant events with `trace_id`, `v: 1`, `prev` chain linking
   - Verified: chain integrity confirmed, backward compatible with legacy events
-- [ ] Study MetaROM Rust source — understand ROM→cognition training flow
+- [x] Study MetaROM Rust source — understand ROM→cognition training flow
+  - **Architecture:** Full Game Boy (DMG+CGB) emulator in Rust — SM83 CPU, PPU (BG+Win+Sprites), APU (4ch), Timer, MBC1/2/3/5
+  - **Training pipeline:** `letsplay_train` runs ROM for N frames → dumps `mrom.train.v1` JSON. Each frame captures CPU regs, PPU state, framebuffer, memory hashes (FNV1a), APU on/off flags
+  - **Epoch classifier:** DMG ROMs → `gen1_nes`, CGB ROMs → `gen2_snes_genesis`
+  - **Output:** `.mrom.train.json` — consumed by EVEZ-OS `console_war_trainer` for epoch progression
+  - **Live broadcast:** `letsplay_live` emits `mrom.snap.v1` NDJSON to stdout (WebSocket-ready). Also captures `mrom.replay.v1` manifests
+  - **ABI:** `mrom-ecore-abi` defines stable C vtable for plugin-style emulator core loading as `.mrom` arcade carts
+  - **UCF Planner:** Separate crate for strategy planning (`ucf-planner`)
+  - **Key integration point:** Training JSON → spine events. Each frame record could emit a `cognition.train_frame` spine event with frame state summary
 - [ ] Research local LLM fallback — what can this machine run? (answer: nothing GPU-free viable)
 - [ ] Create Dockerfile for portable deployment (low priority — container env detected)
 - [ ] Formalize Tier 19 causal density estimator with Petri nets (ADR-005)
