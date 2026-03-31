@@ -511,6 +511,34 @@ async def metarom_stats():
 
 
 # ---------------------------------------------------------------------------
+# Routes — Income Engine
+# ---------------------------------------------------------------------------
+
+@app.get("/api/income/status")
+async def income_status():
+    return income.get_status()
+
+@app.post("/api/income/scan")
+async def income_scan():
+    opps = await income.scan_all()
+    return {"opportunities": [o.to_dict() for o in opps], "total": len(opps)}
+
+@app.get("/api/income/opportunities")
+async def income_opportunities(n: int = 10, verified: bool = False):
+    return {"opportunities": income.get_top_opportunities(n, verified)}
+
+@app.get("/api/income/portfolio")
+async def income_portfolio():
+    return income.get_portfolio()
+
+@app.post("/api/income/wallet")
+async def add_income_wallet(request: Request):
+    body = await request.json()
+    income.add_wallet(body.get("chain", ""), body.get("address", ""), body.get("label", ""))
+    return {"status": "added"}
+
+
+# ---------------------------------------------------------------------------
 # Routes — Financial Engine
 # ---------------------------------------------------------------------------
 
