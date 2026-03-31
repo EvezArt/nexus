@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+daemon.pid
+daemon.log
+daemon_state.json
+chat_queue.jsonl
+chat_output.jsonl
+routing_scores.json
+config.json
+memory/
