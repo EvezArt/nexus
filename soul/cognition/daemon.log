@@ -215,10 +215,10 @@
 2026-03-31 12:33:32 [INFO]   📦 Auto-committed: 95d38d7
 2026-03-31 12:33:32 [INFO]   📋 Pending tasks: 6
 2026-03-31 12:33:32 [INFO]   ✓ Cycle complete (36 events, 36 commits, 2 memories)
-026-03-31 11:42:50 [INFO]   Spine: /root/.openclaw/workspace/soul/cognition/morpheus_spine.jsonl
-2026-03-31 11:42:50 [INFO]   Interval: 300s
-2026-03-31 11:42:50 [INFO]   Interval: 300s
-2026-03-31 11:42:50 [INFO]   Degradation: FULL
+2026-03-31 12:38:32 [INFO] 💓 Heartbeat #37
+2026-03-31 12:38:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.16)
+2026-03-31 12:38:32 [INFO]   📝 2026-03-31.md: 215 lines
+3-31 11:42:50 [INFO]   Degradation: FULL
 2026-03-31 11:42:50 [INFO]   Degradation: FULL
 2026-03-31 11:42:50 [INFO] ============================================================
 2026-03-31 11:42:50 [INFO] ============================================================
@@ -556,3 +556,6 @@
 2026-03-31 12:37:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
 2026-03-31 12:37:51 [INFO]   ✓ Cycle complete (39 events, 39 commits, 2 memories)
 2026-03-31 12:37:51 [INFO]   ✓ Cycle complete (39 events, 39 commits, 2 memories)
+2026-03-31 12:38:32 [INFO] 💓 Heartbeat #37
+2026-03-31 12:38:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.16)
+2026-03-31 12:38:32 [INFO]   📝 2026-03-31.md: 215 lines
