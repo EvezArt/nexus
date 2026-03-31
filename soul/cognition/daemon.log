@@ -387,9 +387,10 @@
 2026-03-31 14:58:34 [INFO] 💓 Heartbeat #65
 2026-03-31 14:58:34 [INFO]   Strongest memories: pending_tasks(0.95)
 2026-03-31 14:58:34 [INFO]   📝 2026-03-31.md: 351 lines
-y_formation' proportion shifted 592% (1.1% → 7.8%)
-2026-03-31 12:07:50 [INFO]     [distribution_shift] 'memory_formation' proportion shifted 592% (1.1% → 7.8%)
-2026-03-31 12:07:50 [INFO]     [distribution_shift] 'observation' proportion shifted 296% (1.1% → 4.4%)
+2026-03-31 14:58:34 [INFO]   📦 Auto-committed: 55d7e94
+2026-03-31 14:58:34 [INFO]   📋 Pending tasks: 6
+2026-03-31 14:58:34 [INFO]   ✓ Cycle complete (65 events, 65 commits, 1 memories)
+  [distribution_shift] 'observation' proportion shifted 296% (1.1% → 4.4%)
 2026-03-31 12:07:50 [INFO]     [distribution_shift] 'observation' proportion shifted 296% (1.1% → 4.4%)
 2026-03-31 12:07:50 [INFO]   ✓ Cycle complete (33 events, 33 commits, 2 memories)
 2026-03-31 12:07:50 [INFO]   ✓ Cycle complete (33 events, 33 commits, 2 memories)
@@ -1366,3 +1367,6 @@ y_formation' proportion shifted 592% (1.1% → 7.8%)
 2026-03-31 14:58:34 [INFO] 💓 Heartbeat #65
 2026-03-31 14:58:34 [INFO]   Strongest memories: pending_tasks(0.95)
 2026-03-31 14:58:34 [INFO]   📝 2026-03-31.md: 351 lines
+2026-03-31 14:58:34 [INFO]   📦 Auto-committed: 55d7e94
+2026-03-31 14:58:34 [INFO]   📋 Pending tasks: 6
+2026-03-31 14:58:34 [INFO]   ✓ Cycle complete (65 events, 65 commits, 1 memories)
