@@ -209,10 +209,10 @@
 2026-03-31 12:28:32 [INFO]   📦 Auto-committed: bd6b5b9
 2026-03-31 12:28:32 [INFO]   📋 Pending tasks: 6
 2026-03-31 12:28:32 [INFO]   ✓ Cycle complete (35 events, 35 commits, 2 memories)
-============================
-2026-03-31 11:42:50 [INFO] ⚡ MORPHEUS DAEMON v0.2.0 booting
-2026-03-31 11:42:50 [INFO] ⚡ MORPHEUS DAEMON v0.2.0 booting
-2026-03-31 11:42:50 [INFO]   Workspace: /root/.openclaw/workspace
+2026-03-31 12:33:32 [INFO] 💓 Heartbeat #36
+2026-03-31 12:33:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.17)
+2026-03-31 12:33:32 [INFO]   📝 2026-03-31.md: 215 lines
+: /root/.openclaw/workspace
 2026-03-31 11:42:50 [INFO]   Workspace: /root/.openclaw/workspace
 2026-03-31 11:42:50 [INFO]   Spine: /root/.openclaw/workspace/soul/cognition/morpheus_spine.jsonl
 2026-03-31 11:42:50 [INFO]   Spine: /root/.openclaw/workspace/soul/cognition/morpheus_spine.jsonl
@@ -518,3 +518,16 @@
 2026-03-31 12:32:51 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.30)
 2026-03-31 12:32:51 [INFO]   📝 2026-03-31.md: 215 lines
 2026-03-31 12:32:51 [INFO]   📝 2026-03-31.md: 215 lines
+2026-03-31 12:32:51 [INFO]   📦 Auto-committed: 2e50862
+2026-03-31 12:32:51 [INFO]   📦 Auto-committed: 2e50862
+2026-03-31 12:32:51 [INFO]   📋 Pending tasks: 6
+2026-03-31 12:32:51 [INFO]   📋 Pending tasks: 6
+2026-03-31 12:32:51 [INFO]   🧠 Local cognition: 1 pattern(s)
+2026-03-31 12:32:51 [INFO]   🧠 Local cognition: 1 pattern(s)
+2026-03-31 12:32:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 12:32:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 12:32:51 [INFO]   ✓ Cycle complete (38 events, 38 commits, 2 memories)
+2026-03-31 12:32:51 [INFO]   ✓ Cycle complete (38 events, 38 commits, 2 memories)
+2026-03-31 12:33:32 [INFO] 💓 Heartbeat #36
+2026-03-31 12:33:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.17)
+2026-03-31 12:33:32 [INFO]   📝 2026-03-31.md: 215 lines

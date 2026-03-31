@@ -364,6 +364,11 @@ function updateMessageContent(msgEl, content) {
     container.scrollTop = container.scrollHeight;
 }
 
+function onAssistantComplete(content) {
+    // Auto-speak the response
+    autoSpeak(content);
+}
+
 function appendLoading() {
     const container = document.getElementById('chat-messages');
     const div = document.createElement('div');
