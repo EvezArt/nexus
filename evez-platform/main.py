@@ -40,6 +40,7 @@ from quantum import QuantumManifoldHub
 from automator import IncomeAutomator
 from trunk import Trunk, ChatGPTConnector, PerplexityConnector, N8NConnector
 from emergent import EmergentCognition
+from emergent.trunk_state import MasterTrunk
 from integration import MasterIntegration
 from proof import AGIProofSurface
 from finance.wallet import EVEZWallet
@@ -86,12 +87,13 @@ proof: AGIProofSurface = None
 wallet: EVEZWallet = None
 debt: DebtResolver = None
 daily_income: DailyIncomeEngine = None
+master_trunk: MasterTrunk = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle."""
-    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, trunk, emergent, integration, proof, income, wallet, debt, daily_income
+    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, trunk, emergent, integration, proof, income, wallet, debt, daily_income, master_trunk
 
     logger.info("⚡ EVEZ Platform starting...")
     core = EveZCore(DATA_DIR)
@@ -136,6 +138,9 @@ async def lifespan(app: FastAPI):
     wallet = EVEZWallet(DATA_DIR / "wallet")
     debt = DebtResolver(DATA_DIR / "debt")
     daily_income = DailyIncomeEngine(DATA_DIR / "income")
+
+    # Initialize Master Trunk (canonical state + branch automation)
+    master_trunk = MasterTrunk(DATA_DIR / "trunk")
 
     # Store startup in spine
     core.spine.write("platform.start", {
@@ -761,6 +766,57 @@ async def daily_signup(request: Request):
     body = await request.json()
     daily_income.update_signup_status(body["source"], body["status"])
     return {"status": "updated"}
+
+
+# ---------------------------------------------------------------------------
+# Routes — Master Trunk (Canonical State + Branch Automation)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/trunk/status")
+async def trunk_status():
+    return master_trunk.get_status()
+
+@app.get("/api/trunk/state")
+async def trunk_state():
+    """Full canonical trunk state."""
+    return master_trunk.get_trunk_state()
+
+@app.post("/api/trunk/objective")
+async def trunk_set_objective(request: Request):
+    """Set a trunk objective and auto-decompose into branches."""
+    body = await request.json()
+    return master_trunk.set_objective(
+        objective=body["objective"],
+        auto_decompose=body.get("auto_decompose", True),
+    )
+
+@app.post("/api/trunk/branch/complete")
+async def trunk_complete_branch(request: Request):
+    """Complete a branch and integrate result into trunk."""
+    from emergent.trunk_state import BranchResult
+    body = await request.json()
+    result = BranchResult(
+        objective=body.get("objective", ""),
+        assumptions=body.get("assumptions", []),
+        output=body.get("output", {}),
+        failure_modes=body.get("failure_modes", []),
+        confidence=body.get("confidence", 0.5),
+        return_to_trunk=body.get("return_to_trunk", ""),
+        next_branch=body.get("next_branch"),
+    )
+    return master_trunk.complete_branch(body["branch_id"], result)
+
+@app.post("/api/trunk/battery")
+async def trunk_battery(request: Request):
+    """Run Invariance Battery on a claim (5-way rotation)."""
+    body = await request.json()
+    return master_trunk.battery_test(body.get("claim", ""), body.get("context"))
+
+@app.post("/api/trunk/speculate")
+async def trunk_speculate(request: Request):
+    """Speculative execution — pre-compute next step while current runs."""
+    body = await request.json()
+    return master_trunk.speculate(body.get("objective", ""))
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,93 @@
+{
+  "manifest_version": "1.0.0",
+  "created": "2026-03-31T18:40:00Z",
+  "purpose": "Complete inventory of all Morpheus state copies for survival planning",
+  "threat_model": [
+    "Server death",
+    "GitHub account loss",
+    "API credit exhaustion",
+    "Platform deprecation",
+    "Network partition"
+  ],
+  "state_locations": {
+    "primary_workspace": {
+      "path": "/root/.openclaw/workspace",
+      "host": "Fly Machine (28694d2a74de28)",
+      "survives": ["API credit exhaustion"],
+      "dies_on": ["Server death", "Platform deprecation"],
+      "contents": [
+        "SOUL.md", "IDENTITY.md", "USER.md", "MEMORY.md", "TOOLS.md",
+        "AGENTS.md", "REVENUE.md", "MORPHEUS_DAEMON.md", "README.md",
+        "morpheus_daemon.py", "morpheus_local.py", "morpheus_spine.py",
+        "bootstrap.sh", "morpheus.service", "docker-compose.yml",
+        ".gitignore", ".openclaw/workspace-state.json"
+      ]
+    },
+    "soul_cognition": {
+      "path": "/root/.openclaw/workspace/soul/cognition",
+      "host": "Fly Machine (28694d2a74de28)",
+      "survives": ["API credit exhaustion"],
+      "dies_on": ["Server death", "Platform deprecation"],
+      "contents": [
+        "ACTIVE_WORK.md", "ARCHITECTURE_DECISIONS.md", "TERMINAL_SURFACE.md",
+        "daemon.log", "daemon.pid", "daemon_state.json",
+        "local_cognition.jsonl", "morpheus_spine.jsonl", "speculative_log.md"
+      ]
+    },
+    "memory": {
+      "path": "/root/.openclaw/workspace/memory",
+      "host": "Fly Machine (28694d2a74de28)",
+      "survives": ["API credit exhaustion"],
+      "dies_on": ["Server death", "Platform deprecation"],
+      "contents": ["2026-03-31.md"]
+    },
+    "nexus": {
+      "path": "/root/.openclaw/workspace/nexus",
+      "host": "Fly Machine (28694d2a74de28)",
+      "survives": ["API credit exhaustion"],
+      "dies_on": ["Server death", "Platform deprecation"],
+      "contents": [
+        "nexus_core.py", "nexus_daemon.py", "nexus_ctl.py", "api_server.py",
+        "income_engine.py", "memory_store.py", "freelance.py",
+        "telegram_bot.py", "landing.html", "dashboard.html", "Dockerfile",
+        "providers/*", "revenue/*", "entities/*", "content/*"
+      ]
+    },
+    "github_repos": {
+      "provider": "GitHub",
+      "survives": ["Server death", "API credit exhaustion"],
+      "dies_on": ["GitHub account loss", "Platform deprecation"],
+      "repos": [
+        "evez-os", "Evez666", "MetaROM", "evez-agentnet",
+        "evez-autonomous-ledger", "evez-os-v2", "evez-meme-bus",
+        "maes", "evez-sim", "moltbot-live", "evez666-arg-canon"
+      ]
+    },
+    "openclaw_runtime": {
+      "provider": "OpenClaw / KiloCode",
+      "survives": ["Server death (if workspace backed up)"],
+      "dies_on": ["API credit exhaustion", "Platform deprecation"],
+      "contents": ["Session state", "Gateway config", "Gateway tokens"]
+    },
+    "fly_machine_snapshots": {
+      "provider": "Fly.io",
+      "survives": ["Server death (volume snapshots)"],
+      "dies_on": ["Platform deprecation", "Account loss"],
+      "contents": ["Volume snapshots of /root"]
+    }
+  },
+  "survival_gaps": [
+    "No off-machine backup exists yet — if Fly dies, everything is gone",
+    "GitHub is a single point of failure for code persistence",
+    "No encrypted cold storage backup",
+    "No IPFS/Filecoin decentralized copy",
+    "No self-hosted git mirror"
+  ],
+  "recommended_actions": [
+    "Run backup.sh regularly and push tarball to multiple destinations",
+    "Mirror repos to a self-hosted Gitea or Codeberg",
+    "Push backup tarball to IPFS via pinning service",
+    "Set up cron-based backup to S3-compatible storage",
+    "Store recovery keys and bootstrap script in a separate physical location"
+  ]
+}

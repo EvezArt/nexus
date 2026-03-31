@@ -67,3 +67,162 @@
 - **Training flow:** ROM → FrameRecord → mrom.train.v1 → console_war_trainer ✅
 - **Integration gap identified:** No spine bridge in training pipeline yet
 - **Unblocked:** "Study MetaROM Rust source" task — complete
+
+## Entry 002 — PersistenceArchitect Alpha: Survival Layer
+
+**Timestamp:** 2026-03-31T18:40Z  
+**Branch:** Alpha (PersistenceArchitect)  
+**Objective:** Maximize Morpheus daemon survival against catastrophic failure modes
+
+### Actions Taken
+
+1. **Survival Manifest** (`soul/cognition/survival_manifest.json`)
+   - Full inventory of every Morpheus state copy and its location
+   - Threat model mapped: server death, GitHub loss, credit exhaustion, platform deprecation, network partition
+   - Identified **5 critical survival gaps**: no off-machine backup, GitHub as SPOF, no cold storage, no IPFS copy, no self-hosted git mirror
+
+2. **Backup Script** (`backup.sh`)
+   - Portable single-tarball export of ALL workspace state
+   - Captures: identity files, soul/cognition, memory, nexus ecosystem, daemon code, git metadata, OpenClaw config, system restore context
+   - Includes SHA256 integrity hash and manifest for verification
+   - Stages to temp dir → tarball → cleanup (no residue)
+
+3. **Backup Verified** ✅
+   - Archive: `morpheus-backup-20260331T184057Z.tar.gz`
+   - Size: 220,836 bytes
+   - SHA256: `f5b36e024c1b7a1e978fb9429b71fbd3fd3088f02efa0c23e563dd77b6d8a8e5`
+
+### Delta (What Changed)
+
+| File | Action |
+|------|--------|
+| `soul/cognition/survival_manifest.json` | **Created** — full state inventory |
+| `backup.sh` | **Created** — portable tarball export script |
+| `/root/.openclaw/backups/` | **Created** — first backup archive + manifest |
+| This log | **Updated** — Entry 002 appended |
+
+### Remaining Survival Gaps (Unblocked by Backup Script)
+
+- **No off-machine replication** — tarball only lives on this Fly machine
+- **No cron schedule** — backup is manual, not automated
+- **No decentralized copy** — needs IPFS/Filecoin/S3 pinning
+- **No git mirror** — repos only on GitHub (single point of failure)
+
+### Skeptic Pivot
+
+The backup script works but is only the first layer. Until the tarball is pushed to at least 2 independent off-machine locations (S3 + IPFS, or Codeberg + local NAS), "survival" is a claim, not a fact. The script is ready for cron integration and multi-destination push — that's the next architectural step.
+
+---
+
+## Entry 004 (Gamma Audit) | 2026-03-31T18:40Z
+
+### Gamma: Full System Vulnerability Audit
+**Scope:** `morpheus_spine.py`, `nexus_daemon.py`, `nexus_core.py`, `api_server.py`, `TERMINAL_SURFACE.md`
+
+---
+
+### CATEGORY 1: SINGLE POINTS OF FAILURE
+
+**VULN-001: Chat queue race condition — DATA LOSS on crash**
+`nexus_daemon.py:148` clears `CHAT_QUEUE` (`write_text("")`) BEFORE processing lines. If daemon crashes between clear and process, messages are permanently lost.
+**Fix:** Process each line, then rewrite file with remaining lines; or use `.queue.processing` rename semantics.
+
+**VULN-002: Spine chain silently resets to "genesis" on corruption**
+`morpheus_spine.py:_last_hash()` catches `json.JSONDecodeError` and returns `"genesis"` — a corrupted spine file silently breaks chain integrity with zero alerting.
+**Fix:** Log a CRITICAL warning when `_last_hash()` falls back to "genesis" on a non-empty file, and emit a `chain_break` spine event.
+
+**VULN-003: PID file has no flock — dual daemon possible**
+`nexus_daemon.py` writes PID file with no advisory lock. Two daemon instances can run simultaneously, double-processing the chat queue and corrupting state.
+**Fix:** Use `fcntl.flock()` on PID file; second instance exits with error.
+
+**VULN-004: Single spine file = single point of truth with no backup**
+`morpheus_spine.jsonl` is the only cognition chain. If this file is deleted or corrupted, the entire event history is gone. No replication, no snapshotting.
+**Fix:** Add periodic spine snapshot to a `.spine.backup.jsonl` on every N events or via daemon cycle.
+
+---
+
+### CATEGORY 2: CREDENTIAL DEPENDENCIES
+
+**VULN-005: API keys stored in plaintext on disk**
+`nexus_core.py` reads `chatgpt_api_key` and `perplexity_api_key` from unencrypted `config.json`. `api_server.py` stores all client keys in `api_keys.json` plaintext. Any filesystem read = total credential compromise.
+**Fix:** Use env vars (`OPENAI_API_KEY`, `PERPLEXITY_API_KEY`) as primary source; fall back to config only if set. Hash api_keys.json at minimum.
+
+**VULN-006: No key rotation mechanism**
+`APIKeyManager` has `generate_key` but no `revoke_key` or `rotate_key`. A compromised key is permanent until manual file edit.
+**Fix:** Add `revoke_key(key)` that sets `revoked: true`; check in `validate()`.
+
+---
+
+### CATEGORY 3: PLATFORM LOCK-IN
+
+**VULN-007: Hardcoded workspace path — zero portability**
+`nexus_core.py` line 25: `WORKSPACE = Path("/root/.openclaw/workspace")`. `nexus_daemon.py` reads `MORPHEUS_WORKSPACE` env but defaults to same absolute path. System is non-functional on any other machine or user.
+**Fix:** Resolve workspace relative to `__file__` or require `MORPHEUS_WORKSPACE` env var with no default (fail loud, not wrong).
+
+**VULN-008: File-based IPC = no network portability**
+Chat queue (`chat_queue.jsonl`), chat output, state files — all local filesystem. Cannot distribute daemon across machines without NFS/SSHFS.
+**Fix:** Abstract queue behind an interface; add optional Redis/socket transport for multi-node.
+
+---
+
+### CATEGORY 4: SCALABILITY LIMITS
+
+**VULN-009: Spine reader loads entire file into memory**
+`morpheus_spine.py:read_spine()` reads full file, splits all lines, parses every JSON object. At 1M events (realistic for 24/7 daemon), this is OOM.
+**Fix:** Implement tail-based reader: seek to EOF, read backwards N bytes, parse last `limit` events only.
+
+**VULN-010: Chain integrity check is O(n) full-scan**
+`cmd_status()` iterates ALL events to check chain integrity. Same memory problem as VULN-009 at scale.
+**Fix:** Check chain integrity on last K events only (sliding window), full scan only on explicit `spine verify`.
+
+**VULN-011: No input length validation on API**
+`api_server.py` reads task `description` with no length limit. A client can POST a 100MB description, exhausting memory.
+**Fix:** Cap `Content-Length` to 64KB; reject with 413 if exceeded.
+
+**VULN-012: Log file grows unbounded**
+`nexus_daemon.py` appends to `daemon.log` with no rotation, no size cap. On a 24/7 daemon, this will fill the disk.
+**Fix:** Use `RotatingFileHandler` (10MB max, 5 backups) or rotate in daemon cycle.
+
+---
+
+### CATEGORY 5: SECURITY VULNERABILITIES
+
+**VULN-013: API server binds 0.0.0.0 — exposed to all interfaces**
+`api_server.py:main()` binds to `("0.0.0.0", port)`. On a VPS, this exposes the entire API to the public internet. `/v1/health` leaks provider status and memory stats without auth.
+**Fix:** Default to `127.0.0.1`; require explicit `--bind 0.0.0.0` flag with warning.
+
+**VULN-014: Daemon /chat endpoint has zero authentication**
+`nexus_daemon.py:_run_server()` POST `/chat` accepts any payload, queues any message. Anyone with localhost access (compromised container, shared host) can inject arbitrary conversations.
+**Fix:** Add HMAC token check or shared secret in `Authorization` header.
+
+**VULN-015: Daemon /output endpoint leaks chat history unauthenticated**
+`nexus_daemon.py` GET `/output` returns last 20 chat responses — including queries and full model responses — with zero auth. `/dashboard` serves raw HTML with embedded data.
+**Fix:** Gate `/output` and `/dashboard` behind auth; or bind daemon to unix socket instead of TCP.
+
+**VULN-016: CORS wildcard on API server**
+`api_server.py` sets `Access-Control-Allow-Origin: *` on every response. Any webpage can make authenticated requests if it obtains an API key.
+**Fix:** Set CORS origin to specific domain or remove wildcard; use explicit allowlist.
+
+**VULN-017: Spine event inputs not sanitized**
+`morpheus_spine.py` takes raw `sys.argv` strings and embeds them in JSON. While `json.dumps` handles escaping, shell expansion before Python sees the args can leak unintended content.
+**Fix:** Validate/spine-event inputs: max length, reject control characters, log suspicious payloads.
+
+---
+
+### CRITICAL FIXES SUMMARY (priority order)
+
+| # | Vulnerability | Severity | One-Line Fix |
+|---|---|---|---|
+| 001 | Chat queue data loss | **CRITICAL** | Process-then-rewrite instead of clear-then-process |
+| 013 | API binds 0.0.0.0 | **CRITICAL** | Default to 127.0.0.1; require explicit --bind flag |
+| 014 | Daemon /chat no auth | **HIGH** | Add HMAC/shared-secret auth to all daemon endpoints |
+| 005 | Plaintext API keys | **HIGH** | Use env vars as primary; never store in plaintext config |
+| 002 | Silent spine corruption | **HIGH** | Log CRITICAL + emit chain_break event on fallback |
+| 009 | Spine OOM at scale | **MEDIUM** | Tail-based reader: seek EOF, parse last N only |
+| 003 | PID race condition | **MEDIUM** | flock() on PID file; second instance exits |
+| 010 | Chain check O(n) scan | **MEDIUM** | Sliding window check for status; full scan on demand |
+| 016 | CORS wildcard | **MEDIUM** | Replace * with explicit origin allowlist |
+| 007 | Hardcoded /root path | **LOW** | Require MORPHEUS_WORKSPACE env, fail if unset |
+
+### Gamma Verdict
+The system can be killed by: (1) a crash during queue processing losing data silently, (2) any localhost process injecting arbitrary conversations, (3) the API server accidentally bound to 0.0.0.0 on a VPS. The spine chain is integrity-checked but silently self-heals on corruption, masking the break. At 10K+ events, the spine reader will OOM. **The three critical fixes (queue race, daemon auth, bind address) must land before any production deployment.**
