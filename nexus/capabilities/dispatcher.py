@@ -153,8 +153,8 @@ class CapabilityDispatcher:
         path_str = match.group(1) if match.lastindex >= 1 else "."
         if path_str:
             path_str = path_str.strip()
-        path = self.workspace / path_str if path_str and not path_str.startswith("/") else Path(path_str or str(self.workspace))
-        files = await self.file_manager.list_dir(path)
+        path = path_str or "."
+        files = self.file_manager.list_dir(path)
 
         if not files:
             return CapabilityResult("file_manager", "list", True, f"No files found in {path}")
@@ -169,8 +169,7 @@ class CapabilityDispatcher:
 
     async def _handle_read_file(self, match) -> CapabilityResult:
         path_str = match.group(1).strip()
-        path = self.workspace / path_str if not path_str.startswith("/") else Path(path_str)
-        content = await self.file_manager.read_file(path)
+        content = self.file_manager.read_file(path_str)
 
         if content is None:
             return CapabilityResult("file_manager", "read", False, f"File not found: {path_str}")
@@ -182,16 +181,15 @@ class CapabilityDispatcher:
 
         return CapabilityResult(
             "file_manager", "read", True,
-            f"📄 **{path.name}** ({len(content):,} bytes):\n```\n{display}\n```",
+            f"📄 **{path_str}** ({len(content):,} bytes):\n```\n{display}\n```",
             {"size": len(content)},
         )
 
     async def _handle_search_content(self, match) -> CapabilityResult:
         query = match.group(1).strip()
         path_str = match.group(2).strip() if match.lastindex >= 2 and match.group(2) else "."
-        base = self.workspace / path_str if not path_str.startswith("/") else Path(path_str)
 
-        results = await self.file_manager.search(query=query, path=base)
+        results = self.file_manager.search(pattern="*", content=query)
 
         if not results:
             return CapabilityResult("file_manager", "search", True, f"No files containing '{query}' found")
@@ -204,7 +202,7 @@ class CapabilityDispatcher:
 
     async def _handle_find_files(self, match) -> CapabilityResult:
         pattern = match.group(1).strip()
-        results = await self.file_manager.search(pattern=pattern)
+        results = self.file_manager.search(pattern=pattern)
 
         if not results:
             return CapabilityResult("file_manager", "find", True, f"No files matching '{pattern}' found")
