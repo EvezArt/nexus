@@ -32,6 +32,9 @@ from stream import AutonomousStream
 from swarm import ComputeSwarm, SwarmProvisioner, ComputeTier
 from cognition import CognitiveEngine
 from access import EveZAccess
+from replicate import Replicator
+from metarom import MetaROMBridge
+from finance import FinancialEngine
 
 # ---------------------------------------------------------------------------
 # Logging
