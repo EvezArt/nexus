@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ NEXUS — Entity Farm Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        h1 { color: #ffd700; font-size: 2rem; margin-bottom: 0.5rem; }
+        .subtitle { color: #888; margin-bottom: 2rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card {
+            background: #12121a;
+            border: 1px solid #2a2a3a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: border-color 0.3s;
+        }
+        .card:hover { border-color: #ffd700; }
+        .card h2 { color: #ffd700; font-size: 1rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px; }
+        .metric { font-size: 2.5rem; font-weight: bold; color: #fff; }
+        .metric-label { color: #888; font-size: 0.8rem; margin-top: 0.25rem; }
+        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+        .status-dot.alive { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        .status-dot.dead { background: #ff4444; }
+        .provider-list { list-style: none; }
+        .provider-list li { padding: 0.5rem 0; border-bottom: 1px solid #1a1a2a; display: flex; justify-content: space-between; }
+        .provider-list li:last-child { border: none; }
+        .tag { display: inline-block; background: #1a1a2a; color: #ffd700; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin: 2px; }
+        .chat-box { margin-top: 2rem; }
+        .chat-input {
+            width: 100%;
+            background: #12121a;
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            padding: 1rem;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 60px;
+        }
+        .chat-input:focus { outline: none; border-color: #ffd700; }
+        .btn {
+            background: #ffd700;
+            color: #0a0a0f;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #ffed4a; }
+        .response-box {
+            background: #0d0d14;
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            min-height: 60px;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+        .revenue-chart { height: 100px; display: flex; align-items: flex-end; gap: 4px; margin-top: 1rem; }
+        .revenue-bar { background: linear-gradient(to top, #ffd700, #ffed4a); border-radius: 2px 2px 0 0; min-width: 8px; flex: 1; }
+        footer { text-align: center; color: #444; margin-top: 3rem; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ NEXUS</h1>
+        <p class="subtitle">Entity Farm Dashboard — One memory. Many minds. Never sleeps.</p>
+
+        <div class="grid">
+            <!-- Status -->
+            <div class="card">
+                <h2>🔄 Status</h2>
+                <div><span class="status-dot alive" id="status-dot"></span><span id="status-text">Checking...</span></div>
+                <div class="metric" id="uptime" style="margin-top:1rem">—</div>
+                <div class="metric-label">Uptime</div>
+            </div>
+
+            <!-- Memory -->
+            <div class="card">
+                <h2>🧠 Memory</h2>
+                <div class="metric" id="mem-entries">—</div>
+                <div class="metric-label">Memory Entries</div>
+                <div class="metric" id="mem-convs" style="margin-top:0.5rem">—</div>
+                <div class="metric-label">Conversations</div>
+            </div>
+
+            <!-- Tasks -->
+            <div class="card">
+                <h2>📋 Tasks</h2>
+                <div class="metric" id="tasks-total">—</div>
+                <div class="metric-label">Total Tasks</div>
+                <div style="margin-top:0.5rem">
+                    <span class="tag" id="tasks-pending">pending: —</span>
+                    <span class="tag" id="tasks-completed">completed: —</span>
+                    <span class="tag" id="tasks-failed">failed: —</span>
+                </div>
+            </div>
+
+            <!-- Revenue -->
+            <div class="card">
+                <h2>💰 Revenue</h2>
+                <div class="metric" id="revenue-total">$0.00</div>
+                <div class="metric-label">Total Earned</div>
+                <div class="revenue-chart" id="revenue-chart"></div>
+            </div>
+
+            <!-- Providers -->
+            <div class="card">
+                <h2>🔌 Providers</h2>
+                <ul class="provider-list" id="provider-list">
+                    <li>Loading...</li>
+                </ul>
+            </div>
+
+            <!-- Spine -->
+            <div class="card">
+                <h2>🔗 Spine Events</h2>
+                <div class="metric" id="spine-events">—</div>
+                <div class="metric-label">Total Events</div>
+                <div class="metric" id="spine-kinds" style="margin-top:0.5rem">—</div>
+                <div class="metric-label">Event Kinds</div>
+            </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="chat-box">
+            <h2 style="color:#ffd700; margin-bottom:1rem">💬 Talk to the Nexus</h2>
+            <textarea class="chat-input" id="chat-input" placeholder="Ask anything... (research, code, analysis)"></textarea>
+            <button class="btn" onclick="sendChat()">⚡ Send</button>
+            <div class="response-box" id="chat-response">Response will appear here...</div>
+        </div>
+
+        <footer>
+            ⚡ NEXUS v0.1.0 — EVEZ Ecosystem — Built by Morpheus
+        </footer>
+    </div>
+
+    <script>
+        const API = window.location.origin;
+
+        async function fetchHealth() {
+            try {
+                const resp = await fetch(API + '/health');
+                const data = await resp.json();
+                document.getElementById('status-dot').className = 'status-dot alive';
+                document.getElementById('status-text').textContent = 'Online';
+                document.getElementById('mem-entries').textContent = data.memory?.total_entries || 0;
+                document.getElementById('mem-convs').textContent = data.memory?.conversations || 0;
+                const provList = document.getElementById('provider-list');
+                provList.innerHTML = '';
+                for (const [name, info] of Object.entries(data.providers || {})) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>${name}</span><span class="tag">${info.enabled ? '✓ active' : '✗ disabled'}</span>`;
+                    provList.appendChild(li);
+                }
+            } catch (e) {
+                document.getElementById('status-dot').className = 'status-dot dead';
+                document.getElementById('status-text').textContent = 'Offline';
+            }
+        }
+
+        async function sendChat() {
+            const input = document.getElementById('chat-input');
+            const response = document.getElementById('chat-response');
+            const msg = input.value.trim();
+            if (!msg) return;
+            response.textContent = '⚡ Thinking...';
+            try {
+                const resp = await fetch(API + '/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: msg})
+                });
+                const data = await resp.json();
+                response.textContent = data.status === 'queued'
+                    ? '📨 Queued — processing on next cycle. Check /output for results.'
+                    : JSON.stringify(data, null, 2);
+            } catch (e) {
+                response.textContent = '❌ Error: ' + e.message;
+            }
+        }
+
+        // Auto-refresh every 30s
+        fetchHealth();
+        setInterval(fetchHealth, 30000);
+
+        // Enter to send
+        document.getElementById('chat-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+        });
+    </script>
+</body>
+</html>
