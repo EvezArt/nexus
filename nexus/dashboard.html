@@ -7,201 +7,328 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
             background: #0a0a0f;
             color: #e0e0e0;
             min-height: 100vh;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        h1 { color: #ffd700; font-size: 2rem; margin-bottom: 0.5rem; }
-        .subtitle { color: #888; margin-bottom: 2rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-        .card {
-            background: #12121a;
-            border: 1px solid #2a2a3a;
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: border-color 0.3s;
+        .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        h1 { color: #ffd700; font-size: 1.8rem; }
+        .subtitle { color: #666; font-size: 0.85rem; }
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #12121a; border: 1px solid #2a2a3a; border-radius: 20px;
+            padding: 6px 14px; font-size: 0.8rem;
         }
-        .card:hover { border-color: #ffd700; }
-        .card h2 { color: #ffd700; font-size: 1rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px; }
-        .metric { font-size: 2.5rem; font-weight: bold; color: #fff; }
-        .metric-label { color: #888; font-size: 0.8rem; margin-top: 0.25rem; }
-        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
-        .status-dot.alive { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
-        .status-dot.dead { background: #ff4444; }
-        .provider-list { list-style: none; }
-        .provider-list li { padding: 0.5rem 0; border-bottom: 1px solid #1a1a2a; display: flex; justify-content: space-between; }
-        .provider-list li:last-child { border: none; }
-        .tag { display: inline-block; background: #1a1a2a; color: #ffd700; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin: 2px; }
-        .chat-box { margin-top: 2rem; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot.green { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+        .dot.red { background: #ff4444; box-shadow: 0 0 8px #ff4444; }
+        .dot.yellow { background: #ffaa00; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+        .card {
+            background: #12121a; border: 1px solid #1a1a2a; border-radius: 10px; padding: 1.2rem;
+        }
+        .card-title { color: #ffd700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.8rem; }
+        .big-num { font-size: 2.2rem; font-weight: bold; color: #fff; line-height: 1; }
+        .label { color: #666; font-size: 0.75rem; margin-top: 4px; }
+        .row { display: flex; gap: 0.8rem; margin-top: 0.6rem; flex-wrap: wrap; }
+        .pill {
+            display: inline-block; background: #1a1a2a; color: #aaa; padding: 2px 10px;
+            border-radius: 12px; font-size: 0.7rem;
+        }
+        .pill.gold { color: #ffd700; }
+        .pill.green { color: #00ff88; }
+        .pill.red { color: #ff4444; }
+
+        /* Live feed */
+        .feed-section { margin-top: 1.5rem; }
+        .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+        .feed-title { color: #ffd700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+        .feed {
+            background: #0d0d14; border: 1px solid #1a1a2a; border-radius: 8px;
+            max-height: 300px; overflow-y: auto; padding: 0.8rem;
+        }
+        .feed-entry {
+            padding: 6px 0; border-bottom: 1px solid #111; font-size: 0.8rem;
+            display: flex; gap: 8px;
+        }
+        .feed-entry:last-child { border: none; }
+        .feed-ts { color: #444; min-width: 55px; }
+        .feed-provider { color: #ffd700; min-width: 80px; }
+        .feed-msg { color: #ccc; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* Chat */
+        .chat-section { margin-top: 1.5rem; }
+        .chat-box { display: flex; gap: 0.5rem; }
         .chat-input {
-            width: 100%;
-            background: #12121a;
-            border: 1px solid #2a2a3a;
-            border-radius: 8px;
-            padding: 1rem;
-            color: #e0e0e0;
-            font-family: inherit;
-            font-size: 1rem;
-            resize: vertical;
-            min-height: 60px;
+            flex: 1; background: #12121a; border: 1px solid #2a2a3a; border-radius: 8px;
+            padding: 0.8rem; color: #e0e0e0; font-family: inherit; font-size: 0.9rem;
+            resize: none; min-height: 44px;
         }
         .chat-input:focus { outline: none; border-color: #ffd700; }
         .btn {
-            background: #ffd700;
-            color: #0a0a0f;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-family: inherit;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            transition: background 0.3s;
+            background: #ffd700; color: #0a0a0f; border: none; padding: 0.8rem 1.2rem;
+            border-radius: 8px; font-family: inherit; font-weight: bold; cursor: pointer;
         }
         .btn:hover { background: #ffed4a; }
+        .btn:disabled { background: #333; color: #666; cursor: not-allowed; }
         .response-box {
-            background: #0d0d14;
-            border: 1px solid #2a2a3a;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
-            min-height: 60px;
-            white-space: pre-wrap;
-            font-size: 0.9rem;
+            background: #0d0d14; border: 1px solid #1a1a2a; border-radius: 8px;
+            padding: 0.8rem; margin-top: 0.5rem; font-size: 0.85rem;
+            white-space: pre-wrap; max-height: 200px; overflow-y: auto;
+            min-height: 40px; color: #aaa;
         }
-        .revenue-chart { height: 100px; display: flex; align-items: flex-end; gap: 4px; margin-top: 1rem; }
-        .revenue-bar { background: linear-gradient(to top, #ffd700, #ffed4a); border-radius: 2px 2px 0 0; min-width: 8px; flex: 1; }
-        footer { text-align: center; color: #444; margin-top: 3rem; font-size: 0.8rem; }
+
+        /* Auth */
+        .auth-bar { margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center; }
+        .auth-input {
+            background: #12121a; border: 1px solid #2a2a3a; border-radius: 6px;
+            padding: 6px 12px; color: #e0e0e0; font-family: inherit; font-size: 0.8rem;
+            width: 300px;
+        }
+        .auth-input:focus { outline: none; border-color: #ffd700; }
+        .auth-label { color: #666; font-size: 0.75rem; }
+
+        footer { text-align: center; color: #333; margin-top: 2rem; font-size: 0.7rem; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0f; }
+        ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚡ NEXUS</h1>
-        <p class="subtitle">Entity Farm Dashboard — One memory. Many minds. Never sleeps.</p>
+        <div class="header">
+            <div>
+                <h1>⚡ NEXUS</h1>
+                <p class="subtitle">Entity Farm Dashboard — One memory. Many minds. Never sleeps.</p>
+            </div>
+            <div class="status-badge">
+                <span class="dot" id="status-dot"></span>
+                <span id="status-text">Connecting...</span>
+            </div>
+        </div>
 
+        <!-- Auth -->
+        <div class="auth-bar">
+            <span class="auth-label">Daemon Secret:</span>
+            <input type="password" class="auth-input" id="auth-secret" placeholder="NEXUS_DAEMON_SECRET (leave empty if not set)">
+            <span class="auth-label" id="auth-status"></span>
+        </div>
+
+        <!-- Metrics Grid -->
         <div class="grid">
-            <!-- Status -->
             <div class="card">
-                <h2>🔄 Status</h2>
-                <div><span class="status-dot alive" id="status-dot"></span><span id="status-text">Checking...</span></div>
-                <div class="metric" id="uptime" style="margin-top:1rem">—</div>
-                <div class="metric-label">Uptime</div>
-            </div>
-
-            <!-- Memory -->
-            <div class="card">
-                <h2>🧠 Memory</h2>
-                <div class="metric" id="mem-entries">—</div>
-                <div class="metric-label">Memory Entries</div>
-                <div class="metric" id="mem-convs" style="margin-top:0.5rem">—</div>
-                <div class="metric-label">Conversations</div>
-            </div>
-
-            <!-- Tasks -->
-            <div class="card">
-                <h2>📋 Tasks</h2>
-                <div class="metric" id="tasks-total">—</div>
-                <div class="metric-label">Total Tasks</div>
-                <div style="margin-top:0.5rem">
-                    <span class="tag" id="tasks-pending">pending: —</span>
-                    <span class="tag" id="tasks-completed">completed: —</span>
-                    <span class="tag" id="tasks-failed">failed: —</span>
+                <div class="card-title">🧠 Memory</div>
+                <div class="big-num" id="mem-entries">—</div>
+                <div class="label">Entries</div>
+                <div class="row">
+                    <span class="pill" id="mem-convs">— conversations</span>
+                    <span class="pill" id="mem-providers">— providers</span>
                 </div>
             </div>
 
-            <!-- Revenue -->
             <div class="card">
-                <h2>💰 Revenue</h2>
-                <div class="metric" id="revenue-total">$0.00</div>
-                <div class="metric-label">Total Earned</div>
-                <div class="revenue-chart" id="revenue-chart"></div>
+                <div class="card-title">🔗 Spine</div>
+                <div class="big-num" id="spine-events">—</div>
+                <div class="label">Events</div>
+                <div class="row">
+                    <span class="pill green" id="spine-chain">chain: checking...</span>
+                    <span class="pill" id="spine-size">— KB</span>
+                </div>
             </div>
 
-            <!-- Providers -->
             <div class="card">
-                <h2>🔌 Providers</h2>
-                <ul class="provider-list" id="provider-list">
-                    <li>Loading...</li>
-                </ul>
+                <div class="card-title">⚡ Daemon</div>
+                <div class="big-num" id="daemon-cycles">—</div>
+                <div class="label">Cycles</div>
+                <div class="row">
+                    <span class="pill" id="daemon-chats">— chats</span>
+                    <span class="pill" id="daemon-errors">— errors</span>
+                    <span class="pill" id="daemon-uptime">— uptime</span>
+                </div>
             </div>
 
-            <!-- Spine -->
             <div class="card">
-                <h2>🔗 Spine Events</h2>
-                <div class="metric" id="spine-events">—</div>
-                <div class="metric-label">Total Events</div>
-                <div class="metric" id="spine-kinds" style="margin-top:0.5rem">—</div>
-                <div class="metric-label">Event Kinds</div>
+                <div class="card-title">📋 Tasks</div>
+                <div class="big-num" id="tasks-total">—</div>
+                <div class="label">Total</div>
+                <div class="row">
+                    <span class="pill gold" id="tasks-revenue">$0.00</span>
+                    <span class="pill green" id="tasks-done">done: —</span>
+                    <span class="pill red" id="tasks-failed">fail: —</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🔌 Providers</div>
+                <div id="provider-list" style="font-size:0.85rem">Loading...</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">⚙️ Capabilities</div>
+                <div id="cap-list" style="font-size:0.85rem">
+                    <span class="pill green">code_runner ✓</span>
+                    <span class="pill green">file_manager ✓</span>
+                    <span class="pill green">scheduler ✓</span>
+                    <span class="pill green">notifications ✓</span>
+                    <br>
+                    <span class="pill">email ☐</span>
+                    <span class="pill">calendar ☐</span>
+                    <span class="pill">voice ☐</span>
+                    <span class="pill">image_gen ☐</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Output Feed -->
+        <div class="feed-section">
+            <div class="feed-header">
+                <span class="feed-title">📡 Live Output</span>
+                <button class="btn" style="padding:4px 10px;font-size:0.7rem" onclick="fetchOutput()">↻ Refresh</button>
+            </div>
+            <div class="feed" id="feed">
+                <div class="feed-entry"><span class="feed-ts">—</span><span class="feed-msg" style="color:#666">Waiting for output...</span></div>
             </div>
         </div>
 
         <!-- Chat -->
-        <div class="chat-box">
-            <h2 style="color:#ffd700; margin-bottom:1rem">💬 Talk to the Nexus</h2>
-            <textarea class="chat-input" id="chat-input" placeholder="Ask anything... (research, code, analysis)"></textarea>
-            <button class="btn" onclick="sendChat()">⚡ Send</button>
-            <div class="response-box" id="chat-response">Response will appear here...</div>
+        <div class="chat-section">
+            <div class="feed-title" style="margin-bottom:0.8rem">💬 Talk to Nexus</div>
+            <div class="chat-box">
+                <textarea class="chat-input" id="chat-input" placeholder="Ask anything... (run python: print('hello'), list files, research, code, analysis)"></textarea>
+                <button class="btn" id="send-btn" onclick="sendChat()">⚡ Send</button>
+            </div>
+            <div class="response-box" id="chat-response">Response appears here...</div>
         </div>
 
-        <footer>
-            ⚡ NEXUS v0.1.0 — EVEZ Ecosystem — Built by Morpheus
-        </footer>
+        <footer>⚡ NEXUS v0.1.0 — EVEZ Ecosystem — Morpheus ⚡</footer>
     </div>
 
     <script>
         const API = window.location.origin;
+        let pollInterval = null;
+
+        function getHeaders() {
+            const secret = document.getElementById('auth-secret').value;
+            const h = {'Content-Type': 'application/json'};
+            if (secret) h['X-Daemon-Secret'] = secret;
+            return h;
+        }
 
         async function fetchHealth() {
             try {
                 const resp = await fetch(API + '/health');
                 const data = await resp.json();
-                document.getElementById('status-dot').className = 'status-dot alive';
+                document.getElementById('status-dot').className = 'dot green';
                 document.getElementById('status-text').textContent = 'Online';
+
+                // Memory
                 document.getElementById('mem-entries').textContent = data.memory?.total_entries || 0;
-                document.getElementById('mem-convs').textContent = data.memory?.conversations || 0;
+                document.getElementById('mem-convs').textContent = `${data.memory?.conversations || 0} convs`;
+                const provCount = Object.keys(data.memory?.by_provider || {}).length;
+                document.getElementById('mem-providers').textContent = `${provCount} sources`;
+
+                // Spine
+                document.getElementById('spine-events').textContent = data.spine?.events || '—';
+                document.getElementById('spine-size').textContent = `${data.spine?.file_size_kb || 0} KB`;
+
+                // Providers
                 const provList = document.getElementById('provider-list');
                 provList.innerHTML = '';
                 for (const [name, info] of Object.entries(data.providers || {})) {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<span>${name}</span><span class="tag">${info.enabled ? '✓ active' : '✗ disabled'}</span>`;
-                    provList.appendChild(li);
+                    const enabled = info.enabled;
+                    provList.innerHTML += `<span class="pill ${enabled ? 'green' : 'red'}">${name} ${enabled ? '✓' : '✗'}</span> `;
                 }
+
+                // Income/Tasks
+                if (data.income) {
+                    document.getElementById('tasks-total').textContent = data.income.tasks?.total || 0;
+                    document.getElementById('tasks-revenue').textContent = `$${(data.income.revenue?.total_usd || 0).toFixed(2)}`;
+                    document.getElementById('tasks-done').textContent = `done: ${data.income.tasks?.completed || 0}`;
+                    document.getElementById('tasks-failed').textContent = `fail: ${data.income.tasks?.failed || 0}`;
+                }
+
+                document.getElementById('auth-status').textContent = '✓ Connected';
+                document.getElementById('auth-status').style.color = '#00ff88';
             } catch (e) {
-                document.getElementById('status-dot').className = 'status-dot dead';
+                document.getElementById('status-dot').className = 'dot red';
                 document.getElementById('status-text').textContent = 'Offline';
             }
+        }
+
+        async function fetchOutput() {
+            try {
+                const resp = await fetch(API + '/output', {headers: getHeaders()});
+                if (resp.status === 401) {
+                    document.getElementById('auth-status').textContent = '✗ Auth required';
+                    document.getElementById('auth-status').style.color = '#ff4444';
+                    return;
+                }
+                const lines = await resp.json();
+                const feed = document.getElementById('feed');
+                feed.innerHTML = '';
+                for (const line of lines.reverse()) {
+                    try {
+                        const entry = JSON.parse(line);
+                        const ts = entry.timestamp ? entry.timestamp.substring(11, 16) : '—:';
+                        const prov = entry.provider || '—';
+                        const msg = entry.query ? entry.query.substring(0, 60) : (entry.response || '').substring(0, 60);
+                        feed.innerHTML += `<div class="feed-entry"><span class="feed-ts">${ts}</span><span class="feed-provider">${prov}</span><span class="feed-msg">${msg}</span></div>`;
+                    } catch {}
+                }
+                if (lines.length === 0) {
+                    feed.innerHTML = '<div class="feed-entry"><span class="feed-ts">—</span><span class="feed-msg" style="color:#666">No output yet...</span></div>';
+                }
+            } catch {}
         }
 
         async function sendChat() {
             const input = document.getElementById('chat-input');
             const response = document.getElementById('chat-response');
+            const btn = document.getElementById('send-btn');
             const msg = input.value.trim();
             if (!msg) return;
-            response.textContent = '⚡ Thinking...';
+
+            btn.disabled = true;
+            btn.textContent = '...';
+            response.textContent = '⚡ Queued...';
+
             try {
                 const resp = await fetch(API + '/chat', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: getHeaders(),
                     body: JSON.stringify({message: msg})
                 });
                 const data = await resp.json();
                 response.textContent = data.status === 'queued'
-                    ? '📨 Queued — processing on next cycle. Check /output for results.'
+                    ? '📨 Queued — check Live Output feed for response.'
                     : JSON.stringify(data, null, 2);
+                input.value = '';
+                // Refresh output after a moment
+                setTimeout(fetchOutput, 2000);
             } catch (e) {
                 response.textContent = '❌ Error: ' + e.message;
             }
+            btn.disabled = false;
+            btn.textContent = '⚡ Send';
         }
 
-        // Auto-refresh every 30s
+        // Init
         fetchHealth();
-        setInterval(fetchHealth, 30000);
+        fetchOutput();
+        setInterval(fetchHealth, 15000);
+        setInterval(fetchOutput, 10000);
 
-        // Enter to send
         document.getElementById('chat-input').addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+        });
+
+        // Save secret to localStorage
+        const savedSecret = localStorage.getItem('nexus-secret');
+        if (savedSecret) document.getElementById('auth-secret').value = savedSecret;
+        document.getElementById('auth-secret').addEventListener('change', e => {
+            localStorage.setItem('nexus-secret', e.target.value);
         });
     </script>
 </body>

@@ -160,6 +160,16 @@ class APIHandler(BaseHTTPRequestHandler):
             })
         elif self.path == "/v1/health":
             health = engine.core.health() if engine else {}
+            # Add spine status
+            try:
+                import morpheus_spine
+                spine_status = {
+                    "events": morpheus_spine.count_events(),
+                    "file_size_kb": round(morpheus_spine.SPINE_FILE.stat().st_size / 1024, 1) if morpheus_spine.SPINE_FILE.exists() else 0,
+                }
+                health["spine"] = spine_status
+            except Exception:
+                pass
             self._json_response({"status": "ok", **health})
         elif self.path == "/v1/pricing":
             self._json_response({
