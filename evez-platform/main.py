@@ -69,12 +69,13 @@ replicator: Replicator = None
 metarom: MetaROMBridge = None
 finance: FinancialEngine = None
 income: IncomeEngine = None
+quantum: QuantumManifoldHub = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle."""
-    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, income
+    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, income
 
     logger.info("⚡ EVEZ Platform starting...")
     core = EveZCore(DATA_DIR)
@@ -90,6 +91,7 @@ async def lifespan(app: FastAPI):
     metarom = MetaROMBridge(core.spine, WORKSPACE)
     finance = FinancialEngine(core.spine, cognition, DATA_DIR)
     income = IncomeEngine(core.spine, cognition, DATA_DIR)
+    quantum = QuantumManifoldHub(core.spine, DATA_DIR / "quantum")
     income = IncomeEngine(core.spine, cognition, DATA_DIR / "income")
 
     # Store startup in spine
