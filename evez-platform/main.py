@@ -74,7 +74,7 @@ income: IncomeEngine = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle."""
-    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance
+    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, income
 
     logger.info("⚡ EVEZ Platform starting...")
     core = EveZCore(DATA_DIR)
@@ -89,6 +89,7 @@ async def lifespan(app: FastAPI):
     replicator = Replicator(WORKSPACE, DATA_DIR)
     metarom = MetaROMBridge(core.spine, WORKSPACE)
     finance = FinancialEngine(core.spine, cognition, DATA_DIR)
+    income = IncomeEngine(core.spine, cognition, DATA_DIR / "income")
 
     # Store startup in spine
     core.spine.write("platform.start", {
@@ -535,6 +536,38 @@ async def finance_signals(n: int = 20):
 @app.get("/api/finance/portfolio")
 async def finance_portfolio():
     return finance.get_portfolio_status()
+
+
+# ---------------------------------------------------------------------------
+# Routes — Income Engine
+# ---------------------------------------------------------------------------
+
+@app.get("/api/income/status")
+async def income_status():
+    return income.get_status()
+
+@app.post("/api/income/scan")
+async def income_scan():
+    opps = await income.scan_all()
+    return {"opportunities": [o.to_dict() for o in opps], "total": len(opps)}
+
+@app.get("/api/income/opportunities")
+async def income_opportunities(n: int = 10, verified: bool = False):
+    return {"opportunities": income.get_top_opportunities(n, verified)}
+
+@app.get("/api/income/portfolio")
+async def income_portfolio():
+    return income.get_portfolio()
+
+@app.post("/api/income/wallet")
+async def income_add_wallet(request: Request):
+    body = await request.json()
+    income.add_wallet(
+        chain=body.get("chain", "ETH"),
+        address=body.get("address", ""),
+        label=body.get("label", ""),
+    )
+    return {"status": "added"}
 
 
 # ---------------------------------------------------------------------------
