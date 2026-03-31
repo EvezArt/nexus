@@ -174,7 +174,7 @@ app = FastAPI(title="EVEZ Platform", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=os.environ.get("EVEZ_CORS_ORIGINS", "http://localhost:8080").split(","),
     allow_methods=["*"],
     allow_headers=["*"],
 )
