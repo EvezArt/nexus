@@ -227,11 +227,10 @@
 2026-03-31 12:43:32 [INFO]   📦 Auto-committed: 64a10c8
 2026-03-31 12:43:32 [INFO]   📋 Pending tasks: 6
 2026-03-31 12:43:32 [INFO]   ✓ Cycle complete (38 events, 38 commits, 2 memories)
-60 lines
-2026-03-31 11:42:50 [INFO]   📝 2026-03-31.md: 60 lines
-2026-03-31 11:42:50 [INFO]   📦 Auto-committed: 373d453
-2026-03-31 11:42:50 [INFO]   📦 Auto-committed: 373d453
-2026-03-31 11:42:50 [INFO]   📋 Pending tasks: 5
+2026-03-31 12:48:32 [INFO] 💓 Heartbeat #39
+2026-03-31 12:48:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.14)
+2026-03-31 12:48:32 [INFO]   📝 2026-03-31.md: 215 lines
+31 11:42:50 [INFO]   📋 Pending tasks: 5
 2026-03-31 11:42:50 [INFO]   📋 Pending tasks: 5
 2026-03-31 11:42:50 [INFO]   🧠 Local cognition: nominal (no patterns)
 2026-03-31 11:42:50 [INFO]   🧠 Local cognition: nominal (no patterns)
@@ -603,3 +602,18 @@
 2026-03-31 12:47:51 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.26)
 2026-03-31 12:47:51 [INFO]   📝 2026-03-31.md: 215 lines
 2026-03-31 12:47:51 [INFO]   📝 2026-03-31.md: 215 lines
+2026-03-31 12:47:51 [INFO]   📦 Auto-committed: 0bf14b3
+2026-03-31 12:47:51 [INFO]   📦 Auto-committed: 0bf14b3
+2026-03-31 12:47:51 [INFO]   📋 Pending tasks: 6
+2026-03-31 12:47:51 [INFO]   📋 Pending tasks: 6
+2026-03-31 12:47:51 [INFO]   🧠 Local cognition: 2 pattern(s)
+2026-03-31 12:47:51 [INFO]   🧠 Local cognition: 2 pattern(s)
+2026-03-31 12:47:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 12:47:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 12:47:51 [INFO]     [distribution_shift] 'cognition.local_pattern' proportion shifted 350% (2.0% → 9.0%)
+2026-03-31 12:47:51 [INFO]     [distribution_shift] 'cognition.local_pattern' proportion shifted 350% (2.0% → 9.0%)
+2026-03-31 12:47:51 [INFO]   ✓ Cycle complete (41 events, 41 commits, 2 memories)
+2026-03-31 12:47:51 [INFO]   ✓ Cycle complete (41 events, 41 commits, 2 memories)
+2026-03-31 12:48:32 [INFO] 💓 Heartbeat #39
+2026-03-31 12:48:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.14)
+2026-03-31 12:48:32 [INFO]   📝 2026-03-31.md: 215 lines
