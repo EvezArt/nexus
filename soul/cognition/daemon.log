@@ -147,3 +147,6 @@ nition/morpheus_spine.jsonl
 2026-03-31 11:23:31 [INFO]   📦 Auto-committed: 69a9e0a
 2026-03-31 11:23:31 [INFO]   📋 Pending tasks: 5
 2026-03-31 11:23:31 [INFO]   ✓ Cycle complete (22 events, 22 commits, 2 memories)
+2026-03-31 11:27:25 [INFO] 💓 Heartbeat #23
+2026-03-31 11:27:25 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.41)
+2026-03-31 11:27:25 [INFO]   📝 2026-03-31.md: 192 lines
