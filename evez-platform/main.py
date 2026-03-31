@@ -37,6 +37,7 @@ from metarom import MetaROMBridge
 from finance import FinancialEngine
 from income import IncomeEngine
 from quantum import QuantumManifoldHub
+from automator import IncomeAutomator
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -70,6 +71,7 @@ metarom: MetaROMBridge = None
 finance: FinancialEngine = None
 income: IncomeEngine = None
 quantum: QuantumManifoldHub = None
+automator: IncomeAutomator = None
 
 
 @asynccontextmanager
