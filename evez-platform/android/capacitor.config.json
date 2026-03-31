@@ -1,0 +1,55 @@
+{
+  "name": "EVEZ666",
+  "packageId": "com.evez666.platform",
+  "versionName": "0.2.0",
+  "versionCode": 200,
+  "minSdkVersion": 28,
+  "targetSdkVersion": 36,
+  "display": {
+    "orientation": "portrait"
+  },
+  "webview": {
+    "url": "http://localhost:8080",
+    "userAgent": "EVEZ666/0.2.0 Android",
+    "javascript": true,
+    "domStorage": true,
+    "database": true,
+    "fileAccess": true,
+    "mixedContent": true
+  },
+  "permissions": [
+    "INTERNET",
+    "ACCESS_NETWORK_STATE",
+    "WRITE_EXTERNAL_STORAGE",
+    "READ_EXTERNAL_STORAGE",
+    "MANAGE_EXTERNAL_STORAGE",
+    "FOREGROUND_SERVICE",
+    "WAKE_LOCK",
+    "RECEIVE_BOOT_COMPLETED",
+    "POST_NOTIFICATIONS"
+  ],
+  "services": {
+    "platform": {
+      "enabled": true,
+      "port": 8080,
+      "autoStart": true,
+      "persistent": true
+    },
+    "ollama": {
+      "enabled": false,
+      "port": 11434,
+      "note": "Requires Termux + Ollama ARM build"
+    }
+  },
+  "features": {
+    "chat": true,
+    "search": true,
+    "stream": true,
+    "cognition": true,
+    "finance": true,
+    "swarm": true,
+    "offline": true,
+    "notifications": true,
+    "background_execution": true
+  }
+}
