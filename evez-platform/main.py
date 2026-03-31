@@ -29,6 +29,7 @@ from core import EveZCore
 from agent import Agent, ModelProvider
 from search import SearchEngine
 from stream import AutonomousStream
+from swarm import ComputeSwarm, SwarmProvisioner, ComputeTier
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -53,12 +54,14 @@ models: ModelProvider = None
 agent: Agent = None
 search_engine: SearchEngine = None
 streamer: AutonomousStream = None
+swarm: ComputeSwarm = None
+provisioner: SwarmProvisioner = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle."""
-    global core, models, agent, search_engine, streamer
+    global core, models, agent, search_engine, streamer, swarm, provisioner
 
     logger.info("⚡ EVEZ Platform starting...")
     core = EveZCore(DATA_DIR)
@@ -66,6 +69,8 @@ async def lifespan(app: FastAPI):
     agent = Agent(core, models)
     search_engine = SearchEngine(models)
     streamer = AutonomousStream(core, models, search_engine)
+    swarm = ComputeSwarm(DATA_DIR / "swarm")
+    provisioner = SwarmProvisioner()
 
     # Store startup in spine
     core.spine.write("platform.start", {
