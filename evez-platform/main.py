@@ -344,7 +344,7 @@ async def system_status():
     model_list = await models.list_models()
     return {
         "platform": "EVEZ",
-        "version": "0.2.0",
+        "version": "0.5.1",
         "models": model_list,
         "ollama": await models.is_ollama_up(),
         "stream": streamer.get_status(),
