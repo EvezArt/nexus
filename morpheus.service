@@ -1,0 +1,27 @@
+[Unit]
+Description=Morpheus — Never-halting cognitive daemon (EVEZ ecosystem)
+After=network.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/.openclaw/workspace
+ExecStart=/usr/bin/python3 /root/.openclaw/workspace/morpheus_daemon.py --interval 300
+Restart=on-failure
+RestartSec=30
+Environment=MORPHEUS_WORKSPACE=/root/.openclaw/workspace
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=morpheus
+
+# Hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/root/.openclaw/workspace
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
