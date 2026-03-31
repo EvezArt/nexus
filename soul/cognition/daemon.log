@@ -8,5 +8,8 @@
 2026-03-31 09:43:29 [INFO] 💓 Heartbeat #2
 2026-03-31 09:43:29 [INFO]   Strongest memories: last_boot(0.95), pending_tasks(0.95)
 2026-03-31 09:43:29 [INFO]   📝 2026-03-31.md: 62 lines
-s: last_boot(0.95), pending_tasks(0.95)
-2026-03-31 09:43:29 [INFO]   📝 2026-03-31.md: 62 lines
+2026-03-31 09:43:29 [INFO]   📦 Auto-committed: cc51cb4
+2026-03-31 09:43:29 [INFO]   📋 Pending tasks: 6
+2026-03-31 09:43:29 [INFO]   ✓ Cycle complete (2 events, 2 commits, 2 memories)
+ending tasks: 6
+2026-03-31 09:43:29 [INFO]   ✓ Cycle complete (2 events, 2 commits, 2 memories)
