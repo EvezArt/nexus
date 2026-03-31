@@ -96,9 +96,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve static files
-STATIC_DIR = Path(__file__).parent.parent / "static"
-TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
+# Serve static files — resolve relative to main.py's parent (evez-platform/)
+BASE_DIR = Path(__file__).parent
+STATIC_DIR = BASE_DIR / "static"
+TEMPLATES_DIR = BASE_DIR / "templates"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
