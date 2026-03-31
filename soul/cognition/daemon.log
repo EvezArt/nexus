@@ -203,10 +203,10 @@
 2026-03-31 12:23:32 [INFO]   📦 Auto-committed: 3e22ff1
 2026-03-31 12:23:32 [INFO]   📋 Pending tasks: 6
 2026-03-31 12:23:32 [INFO]   ✓ Cycle complete (34 events, 34 commits, 2 memories)
-s)
-2026-03-31 11:42:36 [INFO] ⚡ MORPHEUS DAEMON shutting down
-2026-03-31 11:42:36 [INFO]   Final commit: 6f09dd6
-2026-03-31 11:42:36 [INFO]   Uptime: 0s | Heartbeats: 27 | Events: 27 | Errors: 0
+2026-03-31 12:28:32 [INFO] 💓 Heartbeat #35
+2026-03-31 12:28:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.17)
+2026-03-31 12:28:32 [INFO]   📝 2026-03-31.md: 170 lines
+rs: 0
 2026-03-31 11:42:36 [INFO] Goodbye. ⚡
 2026-03-31 11:42:50 [INFO] ============================================================
 2026-03-31 11:42:50 [INFO] ============================================================
@@ -490,3 +490,16 @@ s)
 2026-03-31 12:27:50 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.32)
 2026-03-31 12:27:50 [INFO]   📝 2026-03-31.md: 170 lines
 2026-03-31 12:27:50 [INFO]   📝 2026-03-31.md: 170 lines
+2026-03-31 12:27:50 [INFO]   📦 Auto-committed: 46c3294
+2026-03-31 12:27:50 [INFO]   📦 Auto-committed: 46c3294
+2026-03-31 12:27:50 [INFO]   📋 Pending tasks: 6
+2026-03-31 12:27:50 [INFO]   📋 Pending tasks: 6
+2026-03-31 12:27:50 [INFO]   🧠 Local cognition: 1 pattern(s)
+2026-03-31 12:27:50 [INFO]   🧠 Local cognition: 1 pattern(s)
+2026-03-31 12:27:50 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 12:27:50 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 12:27:50 [INFO]   ✓ Cycle complete (37 events, 37 commits, 2 memories)
+2026-03-31 12:27:50 [INFO]   ✓ Cycle complete (37 events, 37 commits, 2 memories)
+2026-03-31 12:28:32 [INFO] 💓 Heartbeat #35
+2026-03-31 12:28:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.17)
+2026-03-31 12:28:32 [INFO]   📝 2026-03-31.md: 170 lines
