@@ -110,13 +110,13 @@ class CapabilityDispatcher:
     # === Code Execution Handlers ===
 
     async def _handle_run_python(self, match) -> CapabilityResult:
-        code = match.group(match.lastindex).strip()  # last captured group
-        result = await self.code_runner.run_python(code)
+        code = match.group(match.lastindex).strip()
+        result = await self.code_runner.run(code, language="python")
         return self._format_execution_result("python", code, result)
 
     async def _handle_run_python_block(self, match) -> CapabilityResult:
         code = match.group(1).strip()
-        result = await self.code_runner.run_python(code)
+        result = await self.code_runner.run(code, language="python")
         return self._format_execution_result("python", code, result)
 
     async def _handle_run_command(self, match) -> CapabilityResult:
