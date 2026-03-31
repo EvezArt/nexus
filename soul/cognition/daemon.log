@@ -591,9 +591,10 @@
 2026-03-31 17:48:37 [INFO] 💓 Heartbeat #99
 2026-03-31 17:48:37 [INFO]   Strongest memories: pending_tasks(0.95)
 2026-03-31 17:48:37 [INFO]   📝 2026-03-31.md: 494 lines
-ry store repeating identical content hash (76d75a0d8f43b413) 15 times
-2026-03-31 12:37:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
-2026-03-31 12:37:51 [INFO]   ✓ Cycle complete (39 events, 39 commits, 2 memories)
+2026-03-31 17:48:37 [INFO]   📦 Auto-committed: f256a6b
+2026-03-31 17:48:37 [INFO]   📋 Pending tasks: 6
+2026-03-31 17:48:37 [INFO]   ✓ Cycle complete (99 events, 99 commits, 1 memories)
+6-03-31 12:37:51 [INFO]   ✓ Cycle complete (39 events, 39 commits, 2 memories)
 2026-03-31 12:37:51 [INFO]   ✓ Cycle complete (39 events, 39 commits, 2 memories)
 2026-03-31 12:38:32 [INFO] 💓 Heartbeat #37
 2026-03-31 12:38:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.16)
@@ -2344,3 +2345,9 @@ ry store repeating identical content hash (76d75a0d8f43b413) 15 times
 2026-03-31 17:48:37 [INFO] 💓 Heartbeat #99
 2026-03-31 17:48:37 [INFO]   Strongest memories: pending_tasks(0.95)
 2026-03-31 17:48:37 [INFO]   📝 2026-03-31.md: 494 lines
+2026-03-31 17:48:37 [INFO]   📦 Auto-committed: f256a6b
+2026-03-31 17:48:37 [INFO]   📋 Pending tasks: 6
+2026-03-31 17:48:37 [INFO]   ✓ Cycle complete (99 events, 99 commits, 1 memories)
+2026-03-31 17:52:32 [INFO] 💓 Heartbeat #100
+2026-03-31 17:52:32 [INFO]   Strongest memories: pending_tasks(0.95)
+2026-03-31 17:52:32 [INFO]   📝 2026-03-31.md: 494 lines
