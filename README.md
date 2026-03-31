@@ -182,3 +182,65 @@ nexus/
 ## License
 
 EVEZ Ecosystem — see LICENSE
+
+## 💰 Revenue
+
+NEXUS generates revenue through multiple streams. See [REVENUE.md](REVENUE.md) for the complete guide.
+
+### Quick Start: Freelance Automation
+
+```bash
+# Accept a freelance task ($50-500)
+# Submit to nexus for execution:
+python3 nexus/freelance.py research "competitive analysis of AI chatbot platforms"
+python3 nexus/freelance.py write "1500-word blog post about quantum computing"
+python3 nexus/freelance.py code "Python FastAPI auth endpoint with JWT"
+python3 nexus/freelance.py analyze "Solana DeFi market trends 2026"
+```
+
+### Monetized API
+
+```bash
+# Start the API server
+python3 nexus/api_server.py --port 8877
+
+# Generate client API key
+python3 nexus/api_server.py --generate-key client-001 --tier basic
+
+# Clients submit tasks:
+curl -X POST https://your-server.com/v1/tasks \
+  -H "Authorization: Bearer nxk_..." \
+  -H "Content-Type: application/json" \
+  -d '{"type":"research","description":"Solana MEV strategies"}'
+```
+
+### Pricing
+
+| Tier | Tasks/Day | Price |
+|------|-----------|-------|
+| Free | 10 | $0/month |
+| Basic | 100 | $29/month |
+| Pro | 1,000 | $99/month |
+| Enterprise | Unlimited | Contact |
+
+### Components
+
+```
+nexus/
+├── __init__.py              # Package init
+├── nexus_core.py            # Orchestrator + smart router
+├── nexus_daemon.py          # 24/7 daemon (polling or HTTP)
+├── nexus_ctl.py             # CLI control
+├── memory_store.py          # Unified memory system
+├── income_engine.py         # Task execution + revenue tracking
+├── api_server.py            # Monetized REST API
+├── freelance.py             # Freelance task automation
+├── dashboard.html           # Real-time monitoring dashboard
+├── providers/
+│   ├── base.py              # Provider interface
+│   ├── chatgpt.py           # OpenAI adapter
+│   ├── perplexity.py        # Perplexity adapter
+│   └── openclaw_bridge.py   # Local cognition bridge
+├── Dockerfile               # Container build
+└── .gitignore
+```
