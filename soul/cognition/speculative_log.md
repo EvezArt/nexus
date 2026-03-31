@@ -30,3 +30,40 @@
 - **Chain integrity:** Hash-linked event chain: ✅
 - **Backward compatibility:** Old events still parse correctly: ✅
 - **Unblocked:** "Study EVEZ-OS spine.jsonl format" task — now complete (format understood, compatibility achieved)
+
+---
+
+## Entry 002 | 2026-03-31T18:37Z
+
+### Alpha: MetaROM Architecture Comprehension
+**Action:** Studied MetaROM Rust source — full ROM→cognition training flow mapped.
+
+**Architecture (4 crates):**
+1. `gb-core` — Full Game Boy emulator: SM83 CPU (256-op decode + CB-prefix), PPU (BG/Win/Sprites, CGB palettes), APU (Square1/2/Wave/Noise + frame sequencer), Timer, MBC1/2/3/5, CGB double-speed
+2. `mrom-ecore-abi` — Stable C-compatible vtable for plugin-style emulator core loading
+3. `ucf-planner` — Strategy planning engine (separate from emulation)
+
+**Training pipeline:**
+- `letsplay_train` → runs ROM N frames → `mrom.train.v1` JSON (per-frame `FrameRecord`)
+- `FrameRecord` captures: all CPU regs, PPU mode/LY/LCDC, framebuffer (RGB888), FNV1a hashes of WRAM/VRAM/OAM, APU channel enable flags, ROM/RAM bank state
+- Epoch classifier: DMG → `gen1_nes`, CGB → `gen2_snes_genesis`
+- Output consumed by EVEZ-OS `console_war_trainer` for epoch progression
+
+**Live broadcast:**
+- `letsplay_live` → emits `mrom.snap.v1` NDJSON (WebSocket-ready frame snapshots)
+- `ReplayCapture` → builds `mrom.replay.v1` manifest (frame_idx, t_cycles, PC, LY, full state JSON)
+- Save states: `mrom.sav.v1` JSON (CPU + all memory banks hex-encoded)
+
+**Key integration point identified:** Training frame records should emit `cognition.train_frame` spine events — each frame's state summary (PC, regs, PPU mode, memory hashes) becomes a verifiable cognition event on the EVEZ-OS spine.
+
+### Beta: Speculative Pre-Compute (Objective[N+1])
+**Next highest-value action:** The training pipeline currently writes flat JSON files. The spine integration point is unimplemented — no `letsplay_train` binary writes spine events. A thin adapter that wraps `FrameRecord` emission into `cognition.train_frame` spine events would create the training→cognition bridge that the digital map describes as "MetaROM's network crystallizer could be the training → cognition bridge."
+
+### Gamma: Skeptic Pivot
+**Risk:** The `console_war_trainer` consumer may expect exactly the `mrom.train.v1` schema. Adding spine events on the side is safe (append-only, non-destructive). The training JSON format is unchanged; spine events are supplementary audit trail.
+
+### Delta Summary
+- **MetaROM comprehension:** Full architecture mapped ✅
+- **Training flow:** ROM → FrameRecord → mrom.train.v1 → console_war_trainer ✅
+- **Integration gap identified:** No spine bridge in training pipeline yet
+- **Unblocked:** "Study MetaROM Rust source" task — complete
