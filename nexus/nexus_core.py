@@ -17,6 +17,7 @@ Routing logic:
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 from datetime import datetime, timezone
@@ -148,8 +149,9 @@ class NexusCore:
         # Initialize providers
         self.providers: Dict[str, BaseProvider] = {}
 
+        # VULN-005 FIX: Prefer env vars over config file for secrets
         # ChatGPT
-        chatgpt_key = self.config.get("chatgpt_api_key", "")
+        chatgpt_key = os.environ.get("OPENAI_API_KEY", "") or self.config.get("chatgpt_api_key", "")
         if chatgpt_key:
             self.providers["chatgpt"] = ChatGPTProvider(
                 api_key=chatgpt_key,
@@ -158,7 +160,7 @@ class NexusCore:
             )
 
         # Perplexity
-        perplexity_key = self.config.get("perplexity_api_key", "")
+        perplexity_key = os.environ.get("PERPLEXITY_API_KEY", "") or self.config.get("perplexity_api_key", "")
         if perplexity_key:
             self.providers["perplexity"] = PerplexityProvider(
                 api_key=perplexity_key,

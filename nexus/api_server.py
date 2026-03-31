@@ -89,6 +89,10 @@ class APIKeyManager:
         if not info:
             return None
 
+        # VULN-006 FIX: Check revocation
+        if info.get("revoked"):
+            return None
+
         # Reset daily counter
         now = datetime.now(timezone.utc)
         try:
@@ -114,6 +118,23 @@ class APIKeyManager:
             self.keys[key]["total_tasks"] += 1
             self.keys[key]["total_spent_usd"] += cost_usd
             self._save()
+
+    def revoke_key(self, key: str) -> bool:
+        """VULN-006 FIX: Revoke an API key."""
+        if key in self.keys:
+            self.keys[key]["revoked"] = True
+            self.keys[key]["revoked_at"] = datetime.now(timezone.utc).isoformat()
+            self._save()
+            return True
+        return False
+
+    def rotate_key(self, old_key: str) -> Optional[str]:
+        """VULN-006 FIX: Rotate an API key — revoke old, generate new."""
+        info = self.keys.get(old_key)
+        if not info:
+            return None
+        self.revoke_key(old_key)
+        return self.generate_key(info["client_id"], info["tier"])
 
 
 # Global state
@@ -196,6 +217,12 @@ class APIHandler(BaseHTTPRequestHandler):
             if not key_info:
                 return
 
+            # VULN-011 FIX: Reject oversized requests
+            content_length = int(self.headers.get("Content-Length", 0))
+            if content_length > 65536:  # 64KB max
+                self._error(413, "Request body too large (max 64KB)")
+                return
+
             body = self._read_body()
             if not body:
                 return
@@ -269,7 +296,11 @@ class APIHandler(BaseHTTPRequestHandler):
     def _json_response(self, data: dict, status: int = 200):
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
+        # VULN-016 FIX: No wildcard CORS — use explicit origin or none
+        origin = self.headers.get("Origin", "")
+        allowed_origins = os.environ.get("NEXUS_CORS_ORIGINS", "").split(",")
+        if origin and origin in allowed_origins:
+            self.send_header("Access-Control-Allow-Origin", origin)
         self.end_headers()
         self.wfile.write(json.dumps(data, indent=2).encode())
 
@@ -303,7 +334,7 @@ def main():
         return
 
     server = HTTPServer(("127.0.0.1", args.port), APIHandler)
-    print(f"⚡ NEXUS API Server listening on 0.0.0.0:{args.port}")
+    print(f"⚡ NEXUS API Server listening on 127.0.0.1:{args.port}")
     print(f"  Dashboard: http://localhost:{args.port}/")
     print(f"  API Docs:  http://localhost:{args.port}/v1/health")
     print(f"  Pricing:   http://localhost:{args.port}/v1/pricing")
