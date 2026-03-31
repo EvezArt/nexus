@@ -44,7 +44,7 @@ class CapabilityDispatcher:
 
     def __init__(self, workspace: Path = None):
         self.workspace = workspace or Path("/root/.openclaw/workspace")
-        self.code_runner = CodeRunner(workspace=self.workspace)
+        self.code_runner = CodeRunner()
         self.file_manager = FileManager(root=self.workspace)
 
         # Pattern matchers (compiled once)
@@ -248,9 +248,8 @@ class CapabilityDispatcher:
                     parts.append(f"  RAM available: {avail_kb // 1024} MB")
 
         disk = os.statvfs("/")
-        disk_total = (disk.f_blocks * disk.f_frisk) // (1024**3) if hasattr(disk, 'f_frisk') else 0
-        disk_free = (disk.f_bfree * disk.f_frisk) // (1024**3) if hasattr(disk, 'f_frisk') else 0
-        if disk_total:
-            parts.append(f"  Disk: {disk_free}GB free / {disk_total}GB total")
+        disk_total = (disk.f_blocks * disk.f_bsize) // (1024**3)
+        disk_free = (disk.f_bfree * disk.f_bsize) // (1024**3)
+        parts.append(f"  Disk: {disk_free}GB free / {disk_total}GB total")
 
         return CapabilityResult("system", "status", True, "\n".join(parts))
