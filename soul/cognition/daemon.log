@@ -221,10 +221,10 @@
 2026-03-31 12:38:32 [INFO]   📦 Auto-committed: 3401e9e
 2026-03-31 12:38:32 [INFO]   📋 Pending tasks: 6
 2026-03-31 12:38:32 [INFO]   ✓ Cycle complete (37 events, 37 commits, 2 memories)
-50 [INFO] ============================================================
-2026-03-31 11:42:50 [INFO] 💓 Heartbeat #28
-2026-03-31 11:42:50 [INFO] 💓 Heartbeat #28
-2026-03-31 11:42:50 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.51)
+2026-03-31 12:43:32 [INFO] 💓 Heartbeat #38
+2026-03-31 12:43:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.15)
+2026-03-31 12:43:32 [INFO]   📝 2026-03-31.md: 215 lines
+ Strongest memories: pending_tasks(0.95), last_boot(0.51)
 2026-03-31 11:42:50 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.51)
 2026-03-31 11:42:50 [INFO]   📝 2026-03-31.md: 60 lines
 2026-03-31 11:42:50 [INFO]   📝 2026-03-31.md: 60 lines
@@ -574,3 +574,16 @@
 2026-03-31 12:42:51 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.27)
 2026-03-31 12:42:51 [INFO]   📝 2026-03-31.md: 215 lines
 2026-03-31 12:42:51 [INFO]   📝 2026-03-31.md: 215 lines
+2026-03-31 12:42:51 [INFO]   📦 Auto-committed: d3e9eec
+2026-03-31 12:42:51 [INFO]   📦 Auto-committed: d3e9eec
+2026-03-31 12:42:51 [INFO]   📋 Pending tasks: 6
+2026-03-31 12:42:51 [INFO]   📋 Pending tasks: 6
+2026-03-31 12:42:51 [INFO]   🧠 Local cognition: 1 pattern(s)
+2026-03-31 12:42:51 [INFO]   🧠 Local cognition: 1 pattern(s)
+2026-03-31 12:42:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 12:42:51 [INFO]     [stuck_memory] Memory store repeating identical content hash (76d75a0d8f43b413) 15 times
+2026-03-31 12:42:51 [INFO]   ✓ Cycle complete (40 events, 40 commits, 2 memories)
+2026-03-31 12:42:51 [INFO]   ✓ Cycle complete (40 events, 40 commits, 2 memories)
+2026-03-31 12:43:32 [INFO] 💓 Heartbeat #38
+2026-03-31 12:43:32 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.15)
+2026-03-31 12:43:32 [INFO]   📝 2026-03-31.md: 215 lines
