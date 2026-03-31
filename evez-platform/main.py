@@ -30,6 +30,7 @@ from agent import Agent, ModelProvider
 from search import SearchEngine
 from stream import AutonomousStream
 from swarm import ComputeSwarm, SwarmProvisioner, ComputeTier
+from cognition import CognitiveEngine
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -56,6 +57,7 @@ search_engine: SearchEngine = None
 streamer: AutonomousStream = None
 swarm: ComputeSwarm = None
 provisioner: SwarmProvisioner = None
+cognition: CognitiveEngine = None
 
 
 @asynccontextmanager

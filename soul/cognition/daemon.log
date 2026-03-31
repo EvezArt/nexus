@@ -104,5 +104,11 @@
 2026-03-31 11:03:30 [INFO] 💓 Heartbeat #18
 2026-03-31 11:03:30 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.42)
 2026-03-31 11:03:30 [INFO]   📝 2026-03-31.md: 127 lines
-: pending_tasks(0.95), last_boot(0.42)
-2026-03-31 11:03:30 [INFO]   📝 2026-03-31.md: 127 lines
+2026-03-31 11:03:30 [INFO]   📦 Auto-committed: 6138b59
+2026-03-31 11:03:30 [INFO]   📋 Pending tasks: 4
+2026-03-31 11:03:30 [INFO]   ✓ Cycle complete (18 events, 18 commits, 2 memories)
+2026-03-31 11:08:31 [INFO] 💓 Heartbeat #19
+2026-03-31 11:08:31 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.40)
+2026-03-31 11:08:31 [INFO]   📝 2026-03-31.md: 127 lines
+: pending_tasks(0.95), last_boot(0.40)
+2026-03-31 11:08:31 [INFO]   📝 2026-03-31.md: 127 lines
