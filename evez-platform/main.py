@@ -36,7 +36,7 @@ from replicate import Replicator
 from metarom import MetaROMBridge
 from finance import FinancialEngine
 from income import IncomeEngine
-from income import IncomeEngine
+from quantum import QuantumManifoldHub
 
 # ---------------------------------------------------------------------------
 # Logging
