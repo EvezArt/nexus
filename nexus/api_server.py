@@ -302,7 +302,7 @@ def main():
         print(f"Rate limit: {RATE_LIMITS.get(args.tier, 10)} tasks/day")
         return
 
-    server = HTTPServer(("0.0.0.0", args.port), APIHandler)
+    server = HTTPServer(("127.0.0.1", args.port), APIHandler)
     print(f"⚡ NEXUS API Server listening on 0.0.0.0:{args.port}")
     print(f"  Dashboard: http://localhost:{args.port}/")
     print(f"  API Docs:  http://localhost:{args.port}/v1/health")
