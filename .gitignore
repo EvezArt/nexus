@@ -1,0 +1,22 @@
+# EVEZ Platform
+evez-platform/data/
+evez-platform/__pycache__/
+evez-platform/**/__pycache__/
+evez-platform/**/*.pyc
+*.pyc
+__pycache__/
+
+# Daemon state
+soul/cognition/daemon.log
+soul/cognition/daemon.pid
+soul/cognition/daemon_state.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
