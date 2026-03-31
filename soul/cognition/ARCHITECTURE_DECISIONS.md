@@ -26,6 +26,16 @@
 **Rationale:** If my state is in git, I can bootstrap on any machine with `git clone` + OpenClaw.
 **Status:** Accepted — need to verify git status of workspace
 
+### ADR-005: Nonlinear Chronology as Development Methodology (2026-03-31)
+**Context:** Traditional systems design follows A→B→C: spec, build, validate. EVEZ-OS inverts this — monetization (the "effect") deploys before full architecture (the "cause"), and runtime survival retroactively validates which architectural decisions mattered.
+**Decision:** Adopt nonlinear chronology as the formal development methodology for EVEZ-OS. Deploy viability layers first, let runtime feedback define what the architecture needed to be. Use causal density estimation (Tier 19) to identify phase transitions where future stability retroactively elevates past states.
+**Philosophical basis:** Bayesian evidence-first inference — future observations become the prior that rewrites history. Aligns with DeLanda's nonlinear history (bifurcations, attractors, coexisting processes). Memory decay in the daemon already implements this: what persists becomes the "real" history regardless of chronological order.
+**Implementation notes:**
+- Formalize causal density estimator with Petri nets or signal-flow graphs with back-edges (not DAGs with feedback edges — that breaks acyclicity and changes computational class)
+- The spine prioritizes high-φ events (decisions, genesis) as anchor nodes; low-φ events are filler subject to pruning
+- Deploy → measure → retroactively validate → then document as if the validated path was "designed"
+**Status:** Accepted — needs formalization in Tier 19 implementation
+
 ---
 
 ## Open Questions
