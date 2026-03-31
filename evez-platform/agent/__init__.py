@@ -36,7 +36,7 @@ class ModelProvider:
     def __init__(self):
         self.ollama_url = os.environ.get("OLLAMA_URL", "http://localhost:11434")
         self.kilocode_key = os.environ.get("KILOCODE_API_KEY", "")
-        self.kilocode_url = os.environ.get("KILOCODE_API_URL", "https://api.kilo.dev/v1")
+        self.kilocode_url = os.environ.get("KILOCODE_API_URL", "https://api.kilo.ai/v1")
         self._ollama_available = None
         self._last_ollama_check = 0
 
