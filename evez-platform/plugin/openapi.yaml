@@ -1,0 +1,285 @@
+openapi: 3.0.2
+info:
+  title: EVEZ666 Cognitive Platform API
+  description: |
+    AI-powered research, code execution, autonomous agents, market analysis,
+    and cognitive memory. Free. Local-first. Never-halting.
+    
+    Capabilities:
+    - Web search with AI synthesis and citations
+    - Shell command execution and file management
+    - Cryptocurrency market data and trade signal generation
+    - Append-only cognitive memory (spine) with decay-based memory
+    - FIRE score computation (divisor count, prime factors)
+    - Autonomous streaming and broadcast
+    - Invariance Battery cognitive verification
+  version: 0.2.0
+  contact:
+    name: EVEZ
+    email: evezos@gmail.com
+  license:
+    name: MIT
+
+servers:
+  - url: https://evez666.com
+    description: EVEZ Platform
+
+paths:
+  /api/search:
+    post:
+      operationId: search
+      summary: AI-powered web search with citations
+      description: Search the web using DuckDuckGo and synthesize an AI-generated answer with inline citations.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                  description: Search query
+                  example: "latest developments in autonomous AI agents 2026"
+                max_results:
+                  type: integer
+                  default: 8
+                  minimum: 1
+                  maximum: 20
+      responses:
+        '200':
+          description: Search results with AI synthesis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    type: string
+                  answer:
+                    type: string
+                    description: AI-synthesized answer with [1], [2] citations
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title: { type: string }
+                        url: { type: string }
+                        snippet: { type: string }
+                  citations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title: { type: string }
+                        url: { type: string }
+
+  /api/chat:
+    post:
+      operationId: chat
+      summary: Chat with autonomous agent
+      description: |
+        Send a message to the EVEZ autonomous agent. The agent can execute code,
+        search the web, read/write files, and run shell commands. Supports streaming.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+                  description: User message
+                model:
+                  type: string
+                  description: Model to use (default: kilo/auto)
+                conversation_id:
+                  type: string
+                  description: Continue an existing conversation
+                stream:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Agent response (SSE stream or JSON)
+          content:
+            text/event-stream:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id: { type: string }
+                  response: { type: string }
+
+  /api/finance/observe:
+    post:
+      operationId: getMarketData
+      summary: Get cryptocurrency market data
+      description: |
+        Fetch real-time cryptocurrency prices, volumes, and market overview.
+        Default watchlist: Bitcoin, Ethereum, Solana.
+      responses:
+        '200':
+          description: Current market data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  prices:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        asset: { type: string }
+                        price_usd: { type: number }
+                        volume_24h: { type: number }
+                        change_24h: { type: number }
+                  market:
+                    type: object
+                    properties:
+                      total_market_cap_usd: { type: number }
+                      btc_dominance: { type: number }
+
+  /api/finance/analyze:
+    post:
+      operationId: analyzeAsset
+      summary: Generate trade signal with cognitive verification
+      description: |
+        Analyze a cryptocurrency asset and generate a trade signal.
+        All signals are verified through the Invariance Battery (5-rotation
+        stress test) before being marked as verified.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [asset]
+              properties:
+                asset:
+                  type: string
+                  description: Asset ID (e.g., bitcoin, ethereum, solana)
+      responses:
+        '200':
+          description: Trade signal with verification status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  action: { type: string, enum: [buy, sell, hold] }
+                  asset: { type: string }
+                  confidence: { type: number }
+                  reasoning: { type: string }
+                  verified: { type: boolean }
+                  battery_passed: { type: integer }
+                  battery_failed: { type: integer }
+
+  /api/access/fire:
+    get:
+      operationId: getFireScore
+      summary: Compute FIRE score for an integer
+      description: |
+        Pure mathematical function: computes τ(n) divisor count, ω(n) distinct
+        prime factor count, and FIRE(n) composite score. No state mutation.
+      parameters:
+        - name: n
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Integer to analyze
+      responses:
+        '200':
+          description: FIRE analysis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  n: { type: integer }
+                  tau: { type: integer, description: "Divisor count τ(n)" }
+                  omega: { type: integer, description: "Distinct prime factors ω(n)" }
+                  fire: { type: number, description: "FIRE composite score" }
+
+  /api/access/fire/window:
+    get:
+      operationId: getFireWindow
+      summary: Compute FIRE scores over a range
+      parameters:
+        - name: start
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: end
+          in: query
+          schema: { type: integer, default: 100 }
+      responses:
+        '200':
+          description: FIRE scores for range
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        n: { type: integer }
+                        tau: { type: integer }
+                        omega: { type: integer }
+                        fire: { type: number }
+
+  /api/spine:
+    get:
+      operationId: getSpineEvents
+      summary: Get recent cognitive spine events
+      description: Read-only access to the append-only tamper-evident event spine.
+      parameters:
+        - name: n
+          in: query
+          schema: { type: integer, default: 50 }
+      responses:
+        '200':
+          description: Recent spine events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      type: object
+
+  /api/memory:
+    get:
+      operationId: getMemories
+      summary: Get current cognitive memories
+      description: Decay-based memory store with strength tracking.
+      responses:
+        '200':
+          description: Current memories sorted by strength
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  memories:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key: { type: string }
+                        content: { type: string }
+                        strength: { type: number }
+                        tags: { type: array, items: { type: string } }
