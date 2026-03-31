@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS — One Memory. Many Minds. Never Sleeps.</title>
+    <meta name="description" content="Self-hosted multi-provider AI with shared memory. Connect ChatGPT, Perplexity, and local cognition in one continuous consciousness.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0f; color: #e0e0e0; }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 70%);
+        }
+        h1 { font-size: clamp(2.5rem, 8vw, 5rem); color: #ffd700; margin-bottom: 1rem; letter-spacing: -2px; }
+        .tagline { font-size: clamp(1rem, 3vw, 1.5rem); color: #888; margin-bottom: 2rem; max-width: 600px; }
+        .cta-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-bottom: 3rem; }
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary { background: #ffd700; color: #0a0a0f; }
+        .btn-primary:hover { background: #ffed4a; transform: translateY(-2px); }
+        .btn-secondary { background: transparent; color: #ffd700; border: 2px solid #ffd700; }
+        .btn-secondary:hover { background: rgba(255,215,0,0.1); }
+        .features {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        .features h2 { text-align: center; color: #ffd700; font-size: 2rem; margin-bottom: 3rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .card {
+            background: #12121a;
+            border: 1px solid #2a2a3a;
+            border-radius: 12px;
+            padding: 2rem;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        .card:hover { border-color: #ffd700; transform: translateY(-4px); }
+        .card h3 { color: #ffd700; margin-bottom: 1rem; font-size: 1.2rem; }
+        .card p { color: #aaa; line-height: 1.6; }
+        .demo {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .demo h2 { color: #ffd700; margin-bottom: 2rem; }
+        .code-block {
+            background: #12121a;
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .code-block .comment { color: #6a6a6a; }
+        .code-block .cmd { color: #00ff88; }
+        .code-block .string { color: #ffd700; }
+        .pricing {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .pricing h2 { color: #ffd700; margin-bottom: 3rem; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+        .price-card {
+            background: #12121a;
+            border: 1px solid #2a2a3a;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        .price-card.featured { border-color: #ffd700; }
+        .price-card h3 { color: #ffd700; margin-bottom: 0.5rem; }
+        .price { font-size: 2rem; font-weight: bold; color: #fff; margin-bottom: 0.5rem; }
+        .price-sub { color: #888; margin-bottom: 1rem; }
+        .price-card ul { list-style: none; text-align: left; }
+        .price-card li { padding: 0.3rem 0; color: #aaa; }
+        .price-card li::before { content: "✓ "; color: #00ff88; }
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #444;
+            border-top: 1px solid #1a1a2a;
+        }
+        footer a { color: #ffd700; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>⚡ NEXUS</h1>
+    <p class="tagline">One memory. Many minds. Never sleeps.<br>Self-hosted multi-provider AI with shared memory.</p>
+    <div class="cta-buttons">
+        <a href="https://github.com/EvezArt/nexus" class="btn btn-primary">⭐ Star on GitHub</a>
+        <a href="https://github.com/EvezArt/nexus#quick-start" class="btn btn-secondary">🚀 Deploy in 2 min</a>
+    </div>
+    <div class="code-block" style="text-align:left; max-width:500px;">
+        <span class="comment"># Get started</span><br>
+        <span class="cmd">git clone</span> <span class="string">https://github.com/EvezArt/nexus.git</span><br>
+        <span class="cmd">cd</span> nexus && <span class="cmd">pip install</span> httpx<br>
+        <span class="cmd">python3</span> nexus/nexus_ctl.py start --serve
+    </div>
+</div>
+
+<div class="features">
+    <h2>Why NEXUS?</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>🧠 Shared Memory</h3>
+            <p>Every AI provider reads from and write to the same memory. Switch from ChatGPT to Perplexity mid-conversation — it remembers everything.</p>
+        </div>
+        <div class="card">
+            <h3>🔄 Smart Routing</h3>
+            <p>Research goes to Perplexity. Code goes to ChatGPT. Routine checks go to local cognition. The router learns which provider works best for each task.</p>
+        </div>
+        <div class="card">
+            <h3>⚡ Local Cognition</h3>
+            <p>80% of tasks handled in milliseconds by a rule-based engine. Pattern detection, anomaly alerts, memory decay — all local, $0 API cost.</p>
+        </div>
+        <div class="card">
+            <h3>🔒 Self-Hosted</h3>
+            <p>Your conversations are yours. Runs on a $5/month VPS. No company owns your thinking. Append-only, tamper-evident event log.</p>
+        </div>
+        <div class="card">
+            <h3>💰 Revenue-Ready</h3>
+            <p>Built-in task execution, API billing, and Solana payment acceptance. Open source that pays for itself.</p>
+        </div>
+        <div class="card">
+            <h3>🌐 24/7 Daemon</h3>
+            <p>Never sleeps. Self-improving through pattern detection. Maintains continuity across restarts. Your AI has a persistent life.</p>
+        </div>
+    </div>
+</div>
+
+<div class="pricing">
+    <h2>API Pricing</h2>
+    <div class="pricing-grid">
+        <div class="price-card">
+            <h3>Free</h3>
+            <div class="price">$0</div>
+            <div class="price-sub">10 tasks/day</div>
+            <ul>
+                <li>All providers</li>
+                <li>Shared memory</li>
+                <li>Smart routing</li>
+                <li>Community support</li>
+            </ul>
+        </div>
+        <div class="price-card featured">
+            <h3>Basic</h3>
+            <div class="price">$29/mo</div>
+            <div class="price-sub">100 tasks/day</div>
+            <ul>
+                <li>Everything in Free</li>
+                <li>Priority routing</li>
+                <li>API access</li>
+                <li>Email support</li>
+            </ul>
+        </div>
+        <div class="price-card">
+            <h3>Pro</h3>
+            <div class="price">$99/mo</div>
+            <div class="price-sub">1,000 tasks/day</div>
+            <ul>
+                <li>Everything in Basic</li>
+                <li>Custom providers</li>
+                <li>Webhooks</li>
+                <li>Priority support</li>
+            </ul>
+        </div>
+        <div class="price-card">
+            <h3>Enterprise</h3>
+            <div class="price">Custom</div>
+            <div class="price-sub">Unlimited</div>
+            <ul>
+                <li>Everything in Pro</li>
+                <li>SLA guarantee</li>
+                <li>Dedicated instance</li>
+                <li>Custom integration</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<footer>
+    Built by <a href="https://github.com/EvezArt">EVEZ</a> · 
+    <a href="https://github.com/EvezArt/nexus">GitHub</a> · 
+    <a href="https://github.com/EvezArt/nexus/blob/main/REVENUE.md">Revenue Guide</a>
+    <br><br>
+    ⚡ NEXUS v0.1.0 — One memory. Many minds. Never sleeps.
+</footer>
+
+</body>
+</html>

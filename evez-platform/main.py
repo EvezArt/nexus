@@ -40,6 +40,8 @@ from quantum import QuantumManifoldHub
 from automator import IncomeAutomator
 from trunk import Trunk, ChatGPTConnector, PerplexityConnector, N8NConnector
 from emergent import EmergentCognition
+from finance.wallet import EVEZWallet
+from finance.debt_resolver import DebtResolver
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -76,12 +78,14 @@ quantum: QuantumManifoldHub = None
 automator: IncomeAutomator = None
 trunk: Trunk = None
 emergent: EmergentCognition = None
+wallet: EVEZWallet = None
+debt: DebtResolver = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle."""
-    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, trunk, emergent, income
+    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, trunk, emergent, income, wallet, debt
 
     logger.info("⚡ EVEZ Platform starting...")
     core = EveZCore(DATA_DIR)
@@ -115,6 +119,10 @@ async def lifespan(app: FastAPI):
     # Initialize emergent cognition
     emergent = EmergentCognition(core.spine)
     income = IncomeEngine(core.spine, cognition, DATA_DIR / "income")
+
+    # Initialize wallet and debt resolver
+    wallet = EVEZWallet(DATA_DIR / "wallet")
+    debt = DebtResolver(DATA_DIR / "debt")
 
     # Store startup in spine
     core.spine.write("platform.start", {
@@ -589,6 +597,120 @@ async def finance_signals(n: int = 20):
 @app.get("/api/finance/portfolio")
 async def finance_portfolio():
     return finance.get_portfolio_status()
+
+
+# ---------------------------------------------------------------------------
+# Routes — HD Wallet
+# ---------------------------------------------------------------------------
+
+@app.get("/api/wallet/status")
+async def wallet_status():
+    return wallet.get_status()
+
+@app.get("/api/wallet/info")
+async def wallet_info():
+    """Public-safe wallet info (no private keys)."""
+    return wallet.get_public_info()
+
+@app.post("/api/wallet/create")
+async def wallet_create(request: Request):
+    """Create new HD wallet. Returns mnemonic ONCE."""
+    body = await request.json() if request.headers.get("content-length") else {}
+    result = wallet.create_wallet(label=body.get("label", "evez"))
+    return result
+
+@app.post("/api/wallet/derive")
+async def wallet_derive(request: Request):
+    """Derive new account from HD wallet."""
+    body = await request.json()
+    return wallet.derive_account(
+        index=body.get("index"),
+        label=body.get("label", ""),
+    )
+
+@app.get("/api/wallet/accounts")
+async def wallet_accounts():
+    return {"accounts": wallet.list_accounts()}
+
+
+# ---------------------------------------------------------------------------
+# Routes — Debt Resolver
+# ---------------------------------------------------------------------------
+
+@app.get("/api/debt/status")
+async def debt_status():
+    return debt.get_status()
+
+@app.post("/api/debt/add")
+async def debt_add(request: Request):
+    """Add a debt to the portfolio."""
+    body = await request.json()
+    return debt.add_debt(
+        name=body["name"],
+        balance=body["balance"],
+        interest_rate=body["interest_rate"],
+        minimum_payment=body["minimum_payment"],
+        type=body.get("type", "revolving"),
+        is_collections=body.get("is_collections", False),
+    )
+
+@app.post("/api/debt/income")
+async def debt_set_income(request: Request):
+    """Set monthly income for debt calculations."""
+    body = await request.json()
+    debt.set_income(body["mean"], body.get("std", 0))
+    return {"status": "updated", "mean": body["mean"]}
+
+@app.post("/api/debt/expenses")
+async def debt_set_expenses(request: Request):
+    """Set monthly non-debt expenses."""
+    body = await request.json()
+    debt.set_expenses(body["monthly"])
+    return {"status": "updated", "monthly": body["monthly"]}
+
+@app.post("/api/debt/cash")
+async def debt_set_cash(request: Request):
+    """Set current liquid cash available."""
+    body = await request.json()
+    debt.set_cash(body["available"])
+    return {"status": "updated", "available": body["available"]}
+
+@app.post("/api/debt/analyze")
+async def debt_analyze():
+    """Full probabilistic debt analysis."""
+    return debt.full_analysis()
+
+@app.get("/api/debt/strategies")
+async def debt_strategies():
+    """Compare all payoff strategies."""
+    strats = debt.compute_all_strategies()
+    return {"strategies": [s.to_dict() for s in strats]}
+
+@app.get("/api/debt/negotiate")
+async def debt_negotiate():
+    """Score negotiation opportunities."""
+    return {"opportunities": debt.score_negotiation_opportunities()}
+
+@app.post("/api/debt/kelly")
+async def debt_kelly(request: Request):
+    """Kelly Criterion optimal allocation."""
+    body = await request.json() if request.headers.get("content-length") else {}
+    return debt.kelly_allocation(investment_return=body.get("investment_return", 0.08))
+
+@app.post("/api/debt/monte-carlo")
+async def debt_monte_carlo(request: Request):
+    """Monte Carlo cashflow simulation."""
+    body = await request.json() if request.headers.get("content-length") else {}
+    return debt.monte_carlo_cashflow(
+        n_simulations=body.get("simulations", 1000),
+        months=body.get("months", 60),
+    )
+
+@app.post("/api/debt/bayesian")
+async def debt_bayesian(request: Request):
+    """Bayesian income update from observed data."""
+    body = await request.json()
+    return debt.bayesian_income_update(body.get("incomes", []))
 
 
 # ---------------------------------------------------------------------------
