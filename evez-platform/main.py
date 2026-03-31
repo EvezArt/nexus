@@ -1064,4 +1064,5 @@ async def proof_capture():
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("EVEZ_PORT", "8080"))
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    host = os.environ.get("EVEZ_BIND", "127.0.0.1")
+    uvicorn.run(app, host=host, port=port, log_level="info")
