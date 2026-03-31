@@ -249,6 +249,14 @@ class NexusDaemon:
             def do_GET(self):
                 if self.path == "/health":
                     health = daemon_ref.core.health()
+                    # Add income dashboard if available
+                    try:
+                        from nexus.income_engine import IncomeEngine
+                        engine = IncomeEngine()
+                        dash = engine.get_dashboard()
+                        health["income"] = dash
+                    except Exception:
+                        pass
                     self.send_response(200)
                     self.send_header("Content-Type", "application/json")
                     self.end_headers()
@@ -265,6 +273,16 @@ class NexusDaemon:
                         self.send_response(200)
                         self.end_headers()
                         self.wfile.write(b"[]")
+                elif self.path == "/" or self.path == "/dashboard":
+                    dashboard_file = NEXUS_DIR / "dashboard.html"
+                    if dashboard_file.exists():
+                        self.send_response(200)
+                        self.send_header("Content-Type", "text/html")
+                        self.end_headers()
+                        self.wfile.write(dashboard_file.read_bytes())
+                    else:
+                        self.send_response(404)
+                        self.end_headers()
                 else:
                     self.send_response(404)
                     self.end_headers()

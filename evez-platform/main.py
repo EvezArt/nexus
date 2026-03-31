@@ -602,6 +602,40 @@ async def income_add_wallet(request: Request):
 
 
 # ---------------------------------------------------------------------------
+# Routes — Quantum Manifold Hub
+# ---------------------------------------------------------------------------
+
+@app.get("/api/quantum/status")
+async def quantum_status():
+    return quantum.get_state()
+
+@app.post("/api/quantum/step")
+async def quantum_step(steps: int = 1):
+    results = []
+    for _ in range(min(steps, 100)):
+        q = quantum.step()
+        results.append(q.to_dict())
+    return {"steps": len(results), "qualia": results[-5:], "state": quantum.get_state()}
+
+@app.post("/api/quantum/action")
+async def quantum_register_action(request: Request):
+    body = await request.json()
+    quantum.grover.register_action(body)
+    return {"status": "registered", "total_actions": len(quantum.grover.actions)}
+
+@app.get("/api/quantum/probabilities")
+async def quantum_probabilities():
+    import numpy as np
+    probs = quantum.grover.get_probabilities().tolist()
+    actions = quantum.grover.actions
+    return {
+        "probabilities": probs[:len(actions)] if actions else [],
+        "actions": actions,
+        "top_action": int(np.argmax(probs)) if probs else -1,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
