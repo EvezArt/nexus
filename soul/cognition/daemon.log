@@ -74,5 +74,11 @@
 2026-03-31 10:38:30 [INFO] 💓 Heartbeat #13
 2026-03-31 10:38:30 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.54)
 2026-03-31 10:38:30 [INFO]   📝 2026-03-31.md: 113 lines
-: pending_tasks(0.95), last_boot(0.54)
-2026-03-31 10:38:30 [INFO]   📝 2026-03-31.md: 113 lines
+2026-03-31 10:38:30 [INFO]   📦 Auto-committed: ec8ceba
+2026-03-31 10:38:30 [INFO]   📋 Pending tasks: 4
+2026-03-31 10:38:30 [INFO]   ✓ Cycle complete (13 events, 13 commits, 2 memories)
+2026-03-31 10:43:30 [INFO] 💓 Heartbeat #14
+2026-03-31 10:43:30 [INFO]   Strongest memories: pending_tasks(0.95), last_boot(0.51)
+2026-03-31 10:43:30 [INFO]   📝 2026-03-31.md: 113 lines
+: pending_tasks(0.95), last_boot(0.51)
+2026-03-31 10:43:30 [INFO]   📝 2026-03-31.md: 113 lines
