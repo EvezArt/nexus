@@ -89,7 +89,7 @@ daily_income: DailyIncomeEngine = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup/shutdown lifecycle."""
-    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, trunk, emergent, income, wallet, debt, daily_income
+    global core, models, agent, search_engine, streamer, swarm, provisioner, cognition, access_layer, replicator, metarom, finance, income, quantum, automator, trunk, emergent, integration, income, wallet, debt, daily_income
 
     logger.info("⚡ EVEZ Platform starting...")
     core = EveZCore(DATA_DIR)
@@ -122,6 +122,9 @@ async def lifespan(app: FastAPI):
 
     # Initialize emergent cognition
     emergent = EmergentCognition(core.spine)
+
+    # Initialize master integration (bridges all EvezArt repos)
+    integration = MasterIntegration(WORKSPACE, core.spine)
     income = IncomeEngine(core.spine, cognition, DATA_DIR / "income")
 
     # Initialize wallet and debt resolver
@@ -901,16 +904,17 @@ async def emergent_project(hours: int = 24):
 @app.get("/api/system/graph")
 async def system_graph():
     """Expose current system topology — all modules, all connections."""
+    int_status = integration.get_status() if integration else {}
     return {
         "platform": "EVEZ",
-        "version": "0.5.1",
+        "version": "0.6.0",
         "modules": {
             "core": {"status": "online", "description": "Spine, Memory, Conversations"},
             "agent": {"status": "online", "description": "KiloCode API, tool-calling"},
             "search": {"status": "online", "description": "Web search + AI synthesis"},
             "stream": {"status": "online", "description": "24/7 autonomous broadcast"},
             "cognition": {"status": "online", "description": "Invariance Battery"},
-            "access": {"status": "online", "description": "Read-only façade"},
+            "access": {"status": "online", "description": "Read-only facade"},
             "swarm": {"status": "online", "description": "Compute swarm"},
             "replicate": {"status": "online", "description": "Self-replication"},
             "metarom": {"status": "online", "description": "ROM cognition bridge"},
@@ -920,6 +924,7 @@ async def system_graph():
             "automator": {"status": "online", "description": "Executable income tasks"},
             "trunk": {"status": "online", "description": "Cross-surface bus"},
             "emergent": {"status": "online", "description": "Meta-cognition + learning + temporal"},
+            "integration": {"status": "online", "description": f"Bridge to {int_status.get('connected',0)} EvezArt repos"},
         },
         "surfaces": {
             "chatgpt": {"role": "skeptic", "status": "ready"},
@@ -928,6 +933,7 @@ async def system_graph():
             "n8n": {"role": "executor", "status": "ready"},
             "android": {"role": "mobile", "status": "ready"},
         },
+        "evezart_repos": int_status.get("connected", 0),
         "cron": {
             "watchdog": "every 5 min",
             "income_scan": "every 6 hours",
@@ -935,6 +941,29 @@ async def system_graph():
         },
         "spine_events": core.spine._event_count,
     }
+
+
+# ---------------------------------------------------------------------------
+# Routes — Master Integration (all EvezArt repos)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/integration/status")
+async def integration_status():
+    return integration.get_status()
+
+@app.get("/api/integration/{repo}/files")
+async def integration_repo_files(repo: str):
+    files = integration.list_repo_files(repo)
+    return {"repo": repo, "files": files}
+
+@app.get("/api/integration/{repo}/file")
+async def integration_repo_file(repo: str, path: str = ""):
+    content = integration.get_repo_code(repo, path)
+    return {"repo": repo, "path": path, "content": content[:3000]}
+
+@app.post("/api/integration/{repo}/sync")
+async def integration_sync_repo(repo: str):
+    return integration.sync_repo(repo)
 
 
 # ---------------------------------------------------------------------------
