@@ -63,6 +63,9 @@ swarm: ComputeSwarm = None
 provisioner: SwarmProvisioner = None
 cognition: CognitiveEngine = None
 access_layer: EveZAccess = None
+replicator: Replicator = None
+metarom: MetaROMBridge = None
+finance: FinancialEngine = None
 
 
 @asynccontextmanager
