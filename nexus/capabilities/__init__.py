@@ -12,6 +12,7 @@ from .voice import Voice, SpeechResult, TranscriptResult
 from .scheduler import TaskScheduler, ScheduledTask, TaskStatus
 from .notifications import Notifier, Notification, Priority, Channel
 from .plugins import PluginManager, BasePlugin, PluginMeta
+from .twitter_caller import TwitterVoiceCaller
 
 __all__ = [
     "WebScraper", "ScrapeResult",
@@ -24,4 +25,5 @@ __all__ = [
     "TaskScheduler", "ScheduledTask", "TaskStatus",
     "Notifier", "Notification", "Priority", "Channel",
     "PluginManager", "BasePlugin", "PluginMeta",
+    "TwitterVoiceCaller",
 ]
