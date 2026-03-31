@@ -19,21 +19,56 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
 SPINE_DIR = Path(__file__).parent / "soul" / "cognition"
 SPINE_FILE = SPINE_DIR / "morpheus_spine.jsonl"
 
+SPINE_VERSION = 1  # EVEZ-OS spine event v1 compatibility
+
+
+def _last_hash() -> str:
+    """Get hash of the most recent spine event (for chain linking)."""
+    if not SPINE_FILE.exists():
+        return "genesis"
+    try:
+        lines = SPINE_FILE.read_text(encoding="utf-8").strip().splitlines()
+        if lines:
+            last = json.loads(lines[-1])
+            return last.get("hash", "genesis")
+    except (json.JSONDecodeError, OSError):
+        pass
+    return "genesis"
+
 
 def append_event(event: dict) -> dict:
-    """Append event to morpheus spine with hash and timestamp."""
+    """Append event to morpheus spine with EVEZ-OS v1 schema compliance.
+
+    Schema fields:
+        v        - schema version (1)
+        kind     - event type (required by EVEZ-OS v1)
+        ts       - ISO-8601 timestamp (required by EVEZ-OS v1)
+        trace_id - unique event identifier (required by EVEZ-OS v1)
+        prev     - hash of previous event (chain integrity)
+        hash     - sha256 of this event (tamper-evident)
+        agent    - always "morpheus"
+        ecosystem - always "evez"
+    """
     SPINE_DIR.mkdir(parents=True, exist_ok=True)
 
+    # EVEZ-OS v1 required fields
+    event["v"] = SPINE_VERSION
     if "ts" not in event:
         event["ts"] = datetime.now(timezone.utc).isoformat()
+    if "trace_id" not in event:
+        event["trace_id"] = uuid.uuid4().hex[:16]
 
-    # Add provenance
+    # Chain integrity
+    event["prev"] = _last_hash()
+
+    # Provenance
     event["agent"] = "morpheus"
     event["ecosystem"] = "evez"
 
