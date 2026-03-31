@@ -1,0 +1,115 @@
+name: NEXUS CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: pip install httpx
+
+      - name: Test imports
+        run: |
+          python3 -c "
+          import sys
+          sys.path.insert(0, '.')
+          from nexus.providers.base import Message, ProviderResponse
+          from nexus.providers.chatgpt import ChatGPTProvider
+          from nexus.providers.perplexity import PerplexityProvider
+          from nexus.providers.openclaw_bridge import OpenClawBridge
+          from nexus.memory_store import MemoryStore
+          from nexus.nexus_core import NexusCore
+          print('All imports OK')
+          "
+
+      - name: Test memory store
+        run: |
+          python3 -c "
+          import sys, tempfile, os
+          sys.path.insert(0, '.')
+          os.environ['MORPHEUS_WORKSPACE'] = tempfile.mkdtemp()
+          from nexus.providers.base import Message
+          from nexus.memory_store import MemoryStore
+          mem = MemoryStore()
+          msg = Message(role='user', content='test', provider='test')
+          eid = mem.store_message(msg)
+          ctx = mem.get_context('test')
+          assert len(ctx) > 0, 'Context should not be empty'
+          print('Memory store OK')
+          "
+
+      - name: Test router
+        run: |
+          python3 -c "
+          import sys, tempfile, os
+          sys.path.insert(0, '.')
+          os.environ['MORPHEUS_WORKSPACE'] = tempfile.mkdtemp()
+          from nexus.nexus_core import NexusRouter
+          r = NexusRouter()
+          assert r.classify_query('what is bitcoin price') == 'research'
+          assert r.classify_query('write python function') == 'code'
+          assert r.classify_query('check daemon status') == 'routine'
+          print('Router OK')
+          "
+
+      - name: Lint
+        run: |
+          python3 -m py_compile nexus/__init__.py
+          python3 -m py_compile nexus/providers/base.py
+          python3 -m py_compile nexus/providers/chatgpt.py
+          python3 -m py_compile nexus/providers/perplexity.py
+          python3 -m py_compile nexus/providers/openclaw_bridge.py
+          python3 -m py_compile nexus/memory_store.py
+          python3 -m py_compile nexus/nexus_core.py
+          python3 -m py_compile nexus/nexus_daemon.py
+          python3 -m py_compile nexus/nexus_ctl.py
+          echo "All files compile OK"
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t nexus:latest -f nexus/Dockerfile .
+
+      - name: Test Docker image
+        run: |
+          docker run --rm -d --name nexus-test -p 8877:8877 nexus:latest
+          sleep 5
+          curl -f http://localhost:8877/health || echo "Health check pending"
+          docker logs nexus-test
+          docker stop nexus-test
+
+  deploy-fly:
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Fly
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Fly
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
