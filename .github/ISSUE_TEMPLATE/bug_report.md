@@ -1,28 +1,29 @@
 ---
 name: Bug Report
-about: Report a bug in NEXUS
-title: "[BUG] "
+about: Report a bug or unexpected behavior
+title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-## Describe the bug
-A clear description of the bug.
+## Description
+A clear description of what the bug is.
 
-## To reproduce
-Steps to reproduce:
-1. Run '...'
-2. See error
+## Steps to Reproduce
+1. 
+2. 
+3. 
 
-## Expected behavior
+## Expected Behavior
 What you expected to happen.
 
-## Environment
-- OS: [e.g., Ubuntu 22.04]
-- Python: [e.g., 3.11]
-- NEXUS version: [e.g., v0.1.0]
+## Actual Behavior
+What actually happened.
 
-## Logs
-```
-Paste relevant logs here
-```
+## Environment
+- OS:
+- Version:
+- Node/Browser:
+
+## Additional Context
+Any other context, logs, or screenshots.
