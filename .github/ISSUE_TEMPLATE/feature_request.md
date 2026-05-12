@@ -1,19 +1,19 @@
 ---
 name: Feature Request
-about: Suggest a new feature for NEXUS
-title: "[FEATURE] "
+about: Suggest a new feature or enhancement
+title: '[FEATURE] '
 labels: enhancement
 assignees: ''
 ---
 
-## Describe the feature
-A clear description of what you want.
+## Problem
+What problem does this feature solve?
 
-## Use case
-Why do you need this? What problem does it solve?
+## Proposed Solution
+Describe your proposed solution.
 
-## Proposed solution
-How should this work?
+## Alternatives Considered
+Any alternative solutions or features you've considered.
 
-## Alternatives considered
-Other approaches you've thought about.
+## Additional Context
+Any other context, screenshots, or references.
